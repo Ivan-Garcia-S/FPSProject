@@ -9,6 +9,10 @@ public class PlayerLook : MonoBehaviour
     public float xSensitivity = 90f;
     public float ySensitivity = 90f;
     
+    void Start(){
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+    }
     public void ProcessLook(Vector2 inputVector)
     {
         float mouseX = inputVector.x;

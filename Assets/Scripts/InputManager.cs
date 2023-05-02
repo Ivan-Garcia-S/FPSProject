@@ -11,6 +11,7 @@ public class InputManager : MonoBehaviour
     private PlayerMovement playerMovement;
     //private PlayerInput.PlayerActions onFoot;
     private PlayerLook playerLook;
+    
     // Start is called before the first frame update
     void Awake()
     {
