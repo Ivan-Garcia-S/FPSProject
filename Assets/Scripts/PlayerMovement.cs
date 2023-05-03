@@ -96,7 +96,8 @@ public class PlayerMovement : MonoBehaviour
         
     }
 
-    public void onCrouch(InputAction.CallbackContext context){
+    public void onCrouch(InputAction.CallbackContext context)
+    {
         //Signal to crouch
         crouching = !crouching;
         crouchTimer = 0;
@@ -123,7 +124,8 @@ public class PlayerMovement : MonoBehaviour
     {
         return context.ReadValue<Vector2>();
     }
-    public void onSprint(InputAction.CallbackContext context){
+    public void onSprint(InputAction.CallbackContext context)
+    {
         sprinting = !sprinting;
         if(sprinting){
             speed = 7;

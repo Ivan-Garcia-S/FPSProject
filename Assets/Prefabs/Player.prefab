@@ -113,8 +113,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 12
-  distToGround: 0
   isGrounded: 0
+  maxForce: 5
+  jumpForce: 2.5
+  lerpCrouch: 0
+  crouching: 0
+  crouchTimer: 1
+  sprinting: 0
 --- !u!114 &2248548101956475720
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -177,6 +182,14 @@ MonoBehaviour:
       m_Calls: []
     m_ActionId: 948fe973-499c-4100-96ab-a9905a619a97
     m_ActionName: Player/Look[/Mouse/delta]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 200474b3-8bad-4ead-b3ab-eddc88c0258d
+    m_ActionName: Player/Crouch[/Keyboard/leftCtrl]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: eada901a-0251-4a46-81a1-1f8286865cdd
+    m_ActionName: Player/Sprint[/Keyboard/leftShift]
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Player
@@ -196,7 +209,7 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 0
+  m_Constraints: 80
   m_CollisionDetection: 0
 --- !u!114 &-8355285647166478219
 MonoBehaviour:
@@ -210,7 +223,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8665eff512ae64805b625c6ff43387fb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cam: {fileID: 0}
+  cam: {fileID: 4858714926929734492}
   xSensitivity: 30
   ySensitivity: 30
 --- !u!1 &4858714926929734494

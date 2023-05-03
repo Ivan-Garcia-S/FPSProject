@@ -6,6 +6,7 @@ using UnityEngine.InputSystem;
 public class WeaponManager : MonoBehaviour
 {
     public GameObject playerCam;
+    public Hitmarker hitmark;
     public float maxRange = 100f;
     private Animator animator;
     public float damage = 20f;
@@ -38,6 +39,16 @@ public class WeaponManager : MonoBehaviour
             BotManager botManager = hit.transform.GetComponent<BotManager>();
             if(botManager != null){
                 botManager.Hit(damage);
+                hitmark.botHit2();
+                //If hitmarker already fading end animation and start new one
+                /*if (hitmark.HitmarkerTimeRemaining() > 0)
+                {
+                    hitmark.InterruptHitmarker();
+                    //StopCoroutine(hitmark.botHit());
+                }  
+                StartCoroutine(hitmark.botHit());
+                */
+
             }
         }
         
