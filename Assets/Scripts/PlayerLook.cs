@@ -9,7 +9,7 @@ public class PlayerLook : MonoBehaviour
     public float xSensitivity = 90f;
     public float ySensitivity = 90f;
     
-    void Start(){
+    void Awake(){
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
     }

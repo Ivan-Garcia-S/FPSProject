@@ -9,7 +9,7 @@ public class Hitmarker : MonoBehaviour
     private Image marker;
     //private bool justHit = false;
     private float timeLeft = 0;
-    private float markerLifespan = 3.5f;
+    private static float markerLifespan = 2.25f;
     private bool interruptHitmarker = false;
 
 
@@ -67,7 +67,7 @@ public class Hitmarker : MonoBehaviour
         if(timeLeft > 0){
             interruptHitmarker = true;
         }
-        timeLeft = 3.5f;
+        timeLeft = markerLifespan;
     }
 
     public float HitmarkerTimeRemaining(){

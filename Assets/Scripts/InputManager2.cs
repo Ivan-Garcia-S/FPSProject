@@ -3,39 +3,40 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class InputManager : MonoBehaviour
+public class InputManager2 : MonoBehaviour
 {
     //private PlayerInput playerInput;
     private PlayerInputActions inputActions;
     private PlayerInputActions.PlayerActions playerActions;
-    private PlayerMovement playerMovement;
     //private PlayerInput.PlayerActions onFoot;
     private PlayerLook playerLook;
+    private PlayerMotor motor;
     
     // Start is called before the first frame update
     void Awake()
     {
         //Get Player Look and Movement components
-        playerMovement = GetComponent<PlayerMovement>();
         playerLook = GetComponent<PlayerLook>();
+        motor = GetComponent<PlayerMotor>();
         inputActions = new PlayerInputActions();
         playerActions = inputActions.Player;
         inputActions.Player.Enable();
-        //inputActions.Player.Jump.performed += playerMovement.onJump;
-        //inputActions.Player.Crouch.performed += playerMovement.onCrouch;
-     //   inputActions.Player.Sprint.performed += playerMovement.onSprint;
+
+        //Assign funciton calls for when player actions performed
+        inputActions.Player.Jump.performed += ctx => motor.Jump();
+        inputActions.Player.Sprint.performed += ctx => motor.Sprint();
+        inputActions.Player.Crouch.performed += ctx => motor.Crouch();
 
     }
 
     // Update is called once per frame
     void FixedUpdate()
     {
-        playerMovement.processMove(playerActions.Movement.ReadValue<Vector2>());
-        playerMovement.processCrouch();
+        motor.ProcessMove(playerActions.Movement.ReadValue<Vector2>());
+        motor.processCrouch();
     }
 
     void LateUpdate() {
-        Debug.Log("In late update");
         playerLook.ProcessLook(playerActions.Look.ReadValue<Vector2>());
     }
     

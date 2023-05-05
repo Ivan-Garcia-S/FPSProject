@@ -40,15 +40,6 @@ public class WeaponManager : MonoBehaviour
             if(botManager != null){
                 botManager.Hit(damage);
                 hitmark.botHit2();
-                //If hitmarker already fading end animation and start new one
-                /*if (hitmark.HitmarkerTimeRemaining() > 0)
-                {
-                    hitmark.InterruptHitmarker();
-                    //StopCoroutine(hitmark.botHit());
-                }  
-                StartCoroutine(hitmark.botHit());
-                */
-
             }
         }
         
