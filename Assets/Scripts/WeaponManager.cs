@@ -7,14 +7,16 @@ public class WeaponManager : MonoBehaviour
 {
     public GameObject playerCam;
     public Hitmarker hitmark;
+    public Projectile projectile;
     public float maxRange = 100f;
     private Animator animator;
     public float damage = 20f;
     
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         animator = gameObject.GetComponent<Animator>();
+
     }
 
     // Update is called once per frame
@@ -38,11 +40,27 @@ public class WeaponManager : MonoBehaviour
             Debug.Log("Hit");
             BotManager botManager = hit.transform.GetComponent<BotManager>();
             if(botManager != null){
-                botManager.Hit(damage);
+                botManager.TakeDamage(damage);
                 hitmark.botHit2();
             }
         }
         
 
     }
+    public void StartShoot()
+    {
+        animator.SetBool("isShooting", true);
+    }
+   
+    public void EndShoot()
+    {
+        animator.SetBool("isShooting", false);
+    }
+
+    public void Reload()
+    {
+        projectile.Reload();
+    }
+
+
 }

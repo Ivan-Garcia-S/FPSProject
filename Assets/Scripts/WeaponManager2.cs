@@ -1,10 +1,17 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using TMPro;
 
-public class Projectile : MonoBehaviour
+public class WeaponManager2: MonoBehaviour
 {
+    public GameObject playerCam;
+    public Hitmarker hitmark;
+    public Projectile2 projectile;
+    public float maxRange = 100f;
+    private Animator animator;
+    //public float damage = 20f;
     //References
     public GameObject bullet;
     public Camera fpsCam;
@@ -23,20 +30,22 @@ public class Projectile : MonoBehaviour
 
     bool shooting, readyToShoot, reloading;
     public bool allowInvoke = true;
-
+    
+    // Start is called before the first frame update
     void Awake()
     {
+        animator = gameObject.GetComponent<Animator>();
+        //bullet = GetComponent<Projectile2>().bullet;
+        
         //Set mag to full
         bulletsLeft = magazineSize;
         readyToShoot = true;
 
     }
-    
-    void Update() 
-    {
-        /////////Old Projectile//////////
-        //MyInput();
 
+    // Update is called once per frame
+    void Update()
+    {
         shooting = GetComponent<Animator>().GetBool("isShooting");
 
         //Auto reload when trying to shoot with no ammo
@@ -52,28 +61,31 @@ public class Projectile : MonoBehaviour
         if(ammoDisplay != null) ammoDisplay.SetText(bulletsLeft / bulletsPerTap + " / " + magazineSize / bulletsPerTap);
     }
 
-    private void MyInput()
-    {
-       
-        //Check if gun is automatic and allowed to hold down shoot button
-        if(isAutomatic) shooting = Input.GetKey(KeyCode.Mouse0);
-        else shooting = Input.GetKeyDown(KeyCode.Mouse0);
+    /*public void onShoot(InputAction.CallbackContext context){
+        //anim.Play();
         
-
-        //Handle reloading
-        if(Input.GetKeyDown(KeyCode.R) && bulletsLeft < magazineSize && !reloading) Reload();
-        
-        //Auto reload when trying to shoot with no ammo
-        if(readyToShoot && shooting && !reloading && bulletsLeft <= 0) Reload();
-
-    
-        //Handle shooting
-        if(readyToShoot && shooting && !reloading && bulletsLeft > 0){
-            bulletsShot = 0;
-            Shoot();
+        RaycastHit hit; 
+        animator.SetBool("isShooting", true);
+        if(context.performed && Physics.Raycast(playerCam.transform.position, transform.forward, out hit, maxRange)){
+            Debug.Log("Hit");
+            BotManager botManager = hit.transform.GetComponent<BotManager>();
+            if(botManager != null){
+                botManager.TakeDamage(damage);
+                hitmark.botHit2();
+            }
         }
+        
 
-
+    }
+    */
+    public void StartShoot()
+    {
+        animator.SetBool("isShooting", true);
+    }
+   
+    public void EndShoot()
+    {
+        animator.SetBool("isShooting", false);
     }
 
     private void Shoot()
@@ -100,7 +112,7 @@ public class Projectile : MonoBehaviour
         Vector3 directionWithSpread = directionNoSpread + new Vector3(spreadX,spreadY,0); 
 
         //Instantiate bullet
-        GameObject currentBullet = Instantiate(bullet, attackPoint.position, Quaternion.identity);
+        GameObject currentBullet = Instantiate(bullet, attackPoint.position, Quaternion.identity, gameObject.transform);
         //Rotate bullet to shoot direction
         currentBullet.transform.forward = directionWithSpread.normalized;
 
@@ -149,5 +161,6 @@ public class Projectile : MonoBehaviour
         bulletsLeft = magazineSize;
         reloading = false;
     }
+
 
 }

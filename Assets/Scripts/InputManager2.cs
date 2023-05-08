@@ -11,6 +11,8 @@ public class InputManager2 : MonoBehaviour
     //private PlayerInput.PlayerActions onFoot;
     private PlayerLook playerLook;
     private PlayerMotor motor;
+    private WeaponManager weaponManager;
+    private WeaponManager2 wM2;
     
     // Start is called before the first frame update
     void Awake()
@@ -18,6 +20,8 @@ public class InputManager2 : MonoBehaviour
         //Get Player Look and Movement components
         playerLook = GetComponent<PlayerLook>();
         motor = GetComponent<PlayerMotor>();
+        weaponManager = GetComponentInChildren<WeaponManager>();
+        wM2 = GetComponentInChildren<WeaponManager2>();
         inputActions = new PlayerInputActions();
         playerActions = inputActions.Player;
         inputActions.Player.Enable();
@@ -26,6 +30,14 @@ public class InputManager2 : MonoBehaviour
         inputActions.Player.Jump.performed += ctx => motor.Jump();
         inputActions.Player.Sprint.performed += ctx => motor.Sprint();
         inputActions.Player.Crouch.performed += ctx => motor.Crouch();
+        
+        /*inputActions.Player.Shoot.started += ctx => weaponManager.StartShoot();
+        inputActions.Player.Shoot.canceled += ctx => weaponManager.EndShoot();
+        inputActions.Player.Reload.performed += ctx => weaponManager.Reload();
+        */
+        inputActions.Player.Shoot.started += ctx => wM2.StartShoot();
+        inputActions.Player.Shoot.canceled += ctx => wM2.EndShoot();
+        inputActions.Player.Reload.performed += ctx => wM2.Reload();
 
     }
 

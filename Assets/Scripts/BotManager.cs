@@ -18,7 +18,7 @@ public class BotManager : MonoBehaviour
     {
         
     }
-    public void Hit(float damage){
+    public void TakeDamage(float damage){
         health -= damage;
         if(health <=0 ){
             Destroy(bot);
