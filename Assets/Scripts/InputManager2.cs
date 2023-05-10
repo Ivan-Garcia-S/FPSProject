@@ -38,6 +38,8 @@ public class InputManager2 : MonoBehaviour
         inputActions.Player.Shoot.started += ctx => wM2.StartShoot();
         inputActions.Player.Shoot.canceled += ctx => wM2.EndShoot();
         inputActions.Player.Reload.performed += ctx => wM2.Reload();
+        inputActions.Player.ADSPress.performed += ctx => wM2.AimingInPressed();
+        inputActions.Player.ADSRelease.performed += ctx => wM2.AimingInReleased();
 
     }
 

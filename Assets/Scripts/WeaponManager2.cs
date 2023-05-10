@@ -8,9 +8,11 @@ public class WeaponManager2: MonoBehaviour
 {
     public GameObject playerCam;
     public Hitmarker hitmark;
+    public PlayerMotor motor;
+    public GameObject crosshair;
     public Projectile2 projectile;
     public float maxRange = 100f;
-    private Animator animator;
+    public Animator animator;
     //public float damage = 20f;
     //References
     public GameObject bullet;
@@ -30,23 +32,36 @@ public class WeaponManager2: MonoBehaviour
 
     bool shooting, readyToShoot, reloading;
     public bool allowInvoke = true;
+
+    [Header("Aiming in")]
+    public bool isAimingIn;
+    public Transform sightTarget;
+    public float sightOffset;
+    public float aimInTime;
+    private Vector3 weaponSwayPosition;
+    private Vector3 weaponSwayPositionVelocity;
+    [SerializeField] private Transform weaponSwayObj;
     
     // Start is called before the first frame update
     void Awake()
     {
-        animator = gameObject.GetComponent<Animator>();
+        //animator = gameObject.GetComponent<Animator>();
         //bullet = GetComponent<Projectile2>().bullet;
         
         //Set mag to full
         bulletsLeft = magazineSize;
         readyToShoot = true;
+        isAutomatic = false;
+        isAimingIn = false;
+        motor = GetComponentInParent<PlayerMotor>();
 
     }
 
     // Update is called once per frame
     void Update()
     {
-        shooting = GetComponent<Animator>().GetBool("isShooting");
+        shooting = animator.GetBool("tryToShoot");
+        ///shooting = animator.GetBool("isShooting");
 
         //Auto reload when trying to shoot with no ammo
         if(readyToShoot && shooting && !reloading && bulletsLeft <= 0) Reload();
@@ -56,40 +71,38 @@ public class WeaponManager2: MonoBehaviour
             bulletsShot = 0;
             Shoot();
         }
+        //CalculateAimIn();
+
+        //Remove crosshair if aiming down sights
+        if(animator.GetBool("aimingDown")) crosshair.SetActive(false);
+        else crosshair.SetActive(true);
+        
+
+        
 
         //Set ammo display
         if(ammoDisplay != null) ammoDisplay.SetText(bulletsLeft / bulletsPerTap + " / " + magazineSize / bulletsPerTap);
     }
 
-    /*public void onShoot(InputAction.CallbackContext context){
-        //anim.Play();
-        
-        RaycastHit hit; 
-        animator.SetBool("isShooting", true);
-        if(context.performed && Physics.Raycast(playerCam.transform.position, transform.forward, out hit, maxRange)){
-            Debug.Log("Hit");
-            BotManager botManager = hit.transform.GetComponent<BotManager>();
-            if(botManager != null){
-                botManager.TakeDamage(damage);
-                hitmark.botHit2();
-            }
-        }
-        
-
-    }
-    */
+    
     public void StartShoot()
     {
-        animator.SetBool("isShooting", true);
+        //animator.SetBool("isShooting", true);
+        animator.SetBool("tryToShoot", true);
     }
    
     public void EndShoot()
     {
-        animator.SetBool("isShooting", false);
+        //animator.SetBool("isShooting", false);
+        //animator.SetBool("isShooting", false);
+        animator.SetBool("tryToShoot", false);
     }
 
     private void Shoot()
     {
+        animator.SetBool("shooting", true);
+        Debug.Log("shooting: " + animator.GetBool("shooting"));
+
         //Allow shot per frame
         readyToShoot = false;
 
@@ -132,7 +145,7 @@ public class WeaponManager2: MonoBehaviour
         {
             Invoke("ResetShot", fireRate);
             allowInvoke = false;
-            if(!isAutomatic) GetComponent<WeaponManager>().EndShoot();
+            if(!isAutomatic) EndShoot();
         }
 
         //If more than one bullet per tap call Shoot() again
@@ -147,6 +160,7 @@ public class WeaponManager2: MonoBehaviour
         //Allow shooting and Invoking again
         readyToShoot = true;
         allowInvoke = true;
+        animator.SetBool("shooting", false);
 
     }
 
@@ -160,6 +174,33 @@ public class WeaponManager2: MonoBehaviour
     {
         bulletsLeft = magazineSize;
         reloading = false;
+    }
+
+    public void AimingInPressed()
+    {
+        animator.SetBool("aimingDown",true);
+        isAimingIn = true;
+        motor.StopSprint();
+    }
+
+    public void AimingInReleased()
+    {
+        animator.SetBool("aimingDown",false);
+        isAimingIn = false;
+    }
+
+    private void CalculateAimIn()
+    {
+        Vector3 targetPosition = transform.position;
+        
+        if(isAimingIn){
+            Debug.Log("CALCUlATE NEW AIM IN");
+            targetPosition = playerCam.transform.position;
+        }
+        weaponSwayPosition = weaponSwayObj.transform.position;
+        weaponSwayPosition = Vector3.SmoothDamp(weaponSwayPosition,targetPosition, ref weaponSwayPositionVelocity, aimInTime);
+        weaponSwayObj.transform.position = weaponSwayPosition;
+
     }
 
 

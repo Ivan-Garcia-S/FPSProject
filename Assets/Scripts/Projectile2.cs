@@ -18,6 +18,7 @@ public class Projectile2 : MonoBehaviour
         }
         
         gameObject.transform.parent = null;
+        
     }
 
     private void Update() 

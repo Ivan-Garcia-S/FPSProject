@@ -7,6 +7,7 @@ public class PlayerMotor : MonoBehaviour
 {
 
     private CharacterController controller;
+    private Animator animator;
     private Vector3 playerVelocity;
     [SerializeField] private float speed = 6f;
     [SerializeField] private float gravity = -9.8f;
@@ -17,12 +18,13 @@ public class PlayerMotor : MonoBehaviour
     private float crouchTimer = 1f;
     private bool sprinting = false;
     private float crouchMultiplier = 0.5f;
-
+  
 
     // Start is called before the first frame update
     void Start()
     {
         controller = GetComponent<CharacterController>();
+        animator = GetComponentInChildren<Animator>();
     }
 
     // Update is called once per frame
@@ -112,15 +114,26 @@ public class PlayerMotor : MonoBehaviour
         if (crouching){
             Crouch();
         }
-        sprinting = !sprinting;
-        //If crouching uncrouch
-        
-        if(sprinting){
-            speed = 7;
+        //Only change sprint if not ADS
+        if(!animator.GetBool("aimingDown")){
+            sprinting = !sprinting;
+            //If crouching uncrouch
+            
+            if(sprinting){
+                speed = 7;
+            }
+            else{
+                speed = 4;
+            }
         }
-        else{
+    }
+
+    public void StopSprint()
+    {
+        if(sprinting) 
+        {
+            sprinting = false;
             speed = 4;
         }
-        
     }
 }
