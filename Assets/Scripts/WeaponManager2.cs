@@ -101,6 +101,7 @@ public class WeaponManager2: MonoBehaviour
     private void Shoot()
     {
         animator.SetBool("shooting", true);
+        motor.StopSprint();
         Debug.Log("shooting: " + animator.GetBool("shooting"));
 
         //Allow shot per frame

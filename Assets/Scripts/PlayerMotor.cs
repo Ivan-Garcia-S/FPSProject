@@ -16,7 +16,7 @@ public class PlayerMotor : MonoBehaviour
     private bool lerpCrouch = false;
     private bool crouching = false;
     private float crouchTimer = 1f;
-    private bool sprinting = false;
+    private bool sprinting;
     private float crouchMultiplier = 0.5f;
   
 
@@ -25,6 +25,7 @@ public class PlayerMotor : MonoBehaviour
     {
         controller = GetComponent<CharacterController>();
         animator = GetComponentInChildren<Animator>();
+        sprinting = false;
     }
 
     // Update is called once per frame
@@ -35,10 +36,15 @@ public class PlayerMotor : MonoBehaviour
     //Recieve input for InputManager.cs and apply them to character controller
     public void ProcessMove(Vector2 input)
     {
+
         Vector3 moveDirection = Vector3.zero;
         moveDirection.x = input.x;
         moveDirection.z = input.y;
-        //Debug.Log("moveDirection = " + moveDirection);
+        Debug.Log("moveDirection = " + moveDirection);
+        
+        //If not moving, turn off sprinting
+        if(moveDirection == Vector3.zero) StopSprint();
+        
         float trueSpeed = speed;
         if(crouching){
             trueSpeed *= crouchMultiplier;
@@ -89,11 +95,10 @@ public class PlayerMotor : MonoBehaviour
 
     public void Jump()
     {
-        if(crouching){
-            Crouch();
-        }
         if(isGrounded){
+            if(crouching) Crouch();
             playerVelocity.y = Mathf.Sqrt(jumpHeight * -3f * gravity);
+            if(sprinting) StopSprint();
         }
     }
 
@@ -114,9 +119,10 @@ public class PlayerMotor : MonoBehaviour
         if (crouching){
             Crouch();
         }
-        //Only change sprint if not ADS
-        if(!animator.GetBool("aimingDown")){
+        //Only change sprint if not ADS and not in air
+        if(!animator.GetBool("aimingDown") && isGrounded){
             sprinting = !sprinting;
+            animator.SetBool("isSprinting",sprinting);
             //If crouching uncrouch
             
             if(sprinting){
@@ -130,6 +136,7 @@ public class PlayerMotor : MonoBehaviour
 
     public void StopSprint()
     {
+        animator.SetBool("isSprinting",false);
         if(sprinting) 
         {
             sprinting = false;
