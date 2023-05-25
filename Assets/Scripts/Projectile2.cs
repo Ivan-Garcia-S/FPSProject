@@ -5,14 +5,14 @@ using UnityEngine;
 public class Projectile2 : MonoBehaviour
 {
     public GameObject bullet;
-    public Hitmarker hitmark;
+    public GameObject hitmark;
     public float damage = 20f;
     public float lifeSpan = 3f;
 
     private void OnEnable() 
     {
-        Debug.Log("Bullet created");
-        hitmark = GetComponentInParent<WeaponManager2>().hitmark;
+        //Debug.Log("Bullet created");
+        //hitmark = GetComponentInParent<WeaponManager2>().hitmark;
         if(hitmark == null){
             Debug.Log("Hitmark null");
         }
@@ -32,7 +32,7 @@ public class Projectile2 : MonoBehaviour
         //Check if Player touching ground
         Debug.Log("Bullet hit");
         if(collision.transform.tag == "Bot"){
-            hitmark.botHit2();
+            hitmark.GetComponent<Hitmarker>().botHit2();
             collision.transform.GetComponent<BotManager>().TakeDamage(damage);
         }
         Destroy(gameObject);

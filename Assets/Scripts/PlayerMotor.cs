@@ -40,7 +40,6 @@ public class PlayerMotor : MonoBehaviour
         Vector3 moveDirection = Vector3.zero;
         moveDirection.x = input.x;
         moveDirection.z = input.y;
-        Debug.Log("moveDirection = " + moveDirection);
         
         //If not moving, turn off sprinting
         if(moveDirection == Vector3.zero) StopSprint();

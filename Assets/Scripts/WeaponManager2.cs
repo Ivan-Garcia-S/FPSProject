@@ -102,7 +102,7 @@ public class WeaponManager2: MonoBehaviour
     {
         animator.SetBool("shooting", true);
         motor.StopSprint();
-        Debug.Log("shooting: " + animator.GetBool("shooting"));
+        //Debug.Log("shooting: " + animator.GetBool("shooting"));
 
         //Allow shot per frame
         readyToShoot = false;
@@ -195,7 +195,7 @@ public class WeaponManager2: MonoBehaviour
         Vector3 targetPosition = transform.position;
         
         if(isAimingIn){
-            Debug.Log("CALCUlATE NEW AIM IN");
+            //Debug.Log("CALCUlATE NEW AIM IN");
             targetPosition = playerCam.transform.position;
         }
         weaponSwayPosition = weaponSwayObj.transform.position;
