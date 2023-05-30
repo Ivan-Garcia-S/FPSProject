@@ -4,6 +4,8 @@ using UnityEngine.AI;
 public class EnemyAI : MonoBehaviour
 {
     public NavMeshAgent agent;
+    public AISensor sensor;
+    private ViewconeDetection detector;
 
     public Transform player;
 
@@ -14,9 +16,10 @@ public class EnemyAI : MonoBehaviour
 
     //Patroling
     public Vector3 walkPoint;
-    bool walkPointSet;
+    public bool walkPointSet;
     public float walkPointRange;
     private Vector3 oldPosition;
+    public Transform[] patrolPoints;
 
     //Attacking
     public float timeBetweenAttacks;
@@ -25,7 +28,7 @@ public class EnemyAI : MonoBehaviour
 
     //States
     public float sightRange, attackRange;
-    public bool playerInSightRange, playerInAttackRange;
+    public bool playerInSight, playerInAttackRange, playerAttackable;
     public PlayerState state;
 
     public enum PlayerState
@@ -39,68 +42,103 @@ public class EnemyAI : MonoBehaviour
     {
         player = GameObject.Find("Player").transform;
         agent = GetComponent<NavMeshAgent>();
+        sensor = GetComponent<AISensor>();
+        detector = GetComponentInChildren<ViewconeDetection>();
+        patrolPoints = GameObject.Find("Patrol Points").GetComponentsInChildren<Transform>();
+        foreach(Transform point in patrolPoints) Debug.Log(point.position);
         oldPosition = agent.transform.position;
     }
 
     void Start(){
         InvokeRepeating("MoveIfStuck", 3f,3f);
-        
+        //agent.destination = patrolPoints[2].position;
     }
 
     private void Update()
     {
+        /*
         //Check for sight and attack range
         playerInSightRange = Physics.CheckSphere(transform.position, sightRange, whatIsPlayer);
         playerInAttackRange = Physics.CheckSphere(transform.position, attackRange, whatIsPlayer);
+        playerAttackable = sensor.IsInSight(player.gameObject);
 
         if (!playerInSightRange && !playerInAttackRange) Patroling();
-        if (playerInSightRange && !playerInAttackRange) ChasePlayer();
-        if (playerInAttackRange && playerInSightRange) AttackPlayer();
+        else if (playerInSightRange && !playerInAttackRange) ChasePlayer();
+        else if (playerAttackable) AttackPlayer();
+        else ChasePlayer();
+        */
+         //Check for sight and attack range
+       
+       
+       
+        //Remove for testing
         
+        playerInSight = detector.alertIcon.activeInHierarchy;
+        playerInAttackRange = Physics.CheckSphere(transform.position, attackRange, whatIsPlayer);
+
+        if (!playerInSight) Patroling();
+        else if (playerInSight && !playerInAttackRange) ChasePlayer();
+        else if (playerInSight && playerInAttackRange) AttackPlayer();
+        
+        
+
         if(walkPointSet) walkPointMarker.position = walkPoint;
         else walkPointMarker.position = new Vector3(-17f,23f,-9f);
+        
+        //GoToPoints();
     }
+    private void GoToPoints()
+    {
+        foreach(Transform point in patrolPoints)
+        {
+            agent.destination = point.position;
 
+            Vector3 distanceToWalkPoint = agent.transform.position - point.position;
+            while(distanceToWalkPoint.magnitude > 1.5f){
+                distanceToWalkPoint = agent.transform.position - point.position;
+            }
+        }
+    }
     private void Patroling()
     {
         state = PlayerState.PATROLING;
         Debug.Log("PATROLING");
         if (!walkPointSet) SearchWalkPoint();
 
-        if (walkPointSet)
-            agent.SetDestination(walkPoint);
+        if (walkPointSet && !agent.hasPath)
+
+            agent.destination = walkPoint;//SetDestination(walkPoint);
+            Debug.Log("Path is " + agent.pathStatus);
 
         Vector3 distanceToWalkPoint = transform.position - walkPoint;
 
         //Walkpoint reached
         if (distanceToWalkPoint.magnitude < 1f)
+            Debug.Log("Within close proximity of point");
             walkPointSet = false;
     }
     private void SearchWalkPoint()
     {
-       
-        Vector3 randDirection = Random.insideUnitSphere * 8f;
- 
+        //Old walkpoint method
+        Vector3 randDirection = Random.insideUnitSphere * 20f;
+
         randDirection += transform.position;
  
         NavMeshHit navHit;
  
-        NavMesh.SamplePosition (randDirection, out navHit, 8f, -1);
+        NavMesh.SamplePosition (randDirection, out navHit, 20f, -1);
         walkPoint = navHit.position;
         walkPointSet = true;
 
         //Debug.Log("New Walkpoint = " + walkPoint);
-        /*
-        //Calculate random point in range
-        float randomZ = Random.Range(-walkPointRange, walkPointRange);
-        float randomX = Random.Range(-walkPointRange, walkPointRange);
-
-        walkPoint = new Vector3(transform.position.x + randomX, transform.position.y, transform.position.z + randomZ);
-        Debug.Log("New Walkpoint = " + walkPoint);
-
-        if (Physics.Raycast(walkPoint, -transform.up, 2f, whatIsGround))
-            walkPointSet = true;
+    
+        //New walkpoint method
+        /*int pointNum = Random.Range(0, patrolPoints.Length);
+        Debug.Log("Point" + (pointNum + 1) + " chosen");
+        walkPoint = patrolPoints[pointNum].position;
+        walkPointSet = true;
         */
+        
     }
 
     private void ChasePlayer()

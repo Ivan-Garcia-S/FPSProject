@@ -13,7 +13,13 @@ public class AISensor : MonoBehaviour
     public LayerMask layers;
     public LayerMask occlusionLayers;
     public Color meshColor = Color.red;
-    public List<GameObject> Objects = new List<GameObject>();
+    public List<GameObject> Objects {
+        get{
+            objects.RemoveAll(obj => !obj);
+            return objects;
+        }
+    } 
+    private List<GameObject> objects = new List<GameObject>();
 
     Collider[] colliders = new Collider[50];
     Mesh mesh;
@@ -38,14 +44,15 @@ public class AISensor : MonoBehaviour
 
     private void Scan()
     {
+       // Debug.Log("Scanning");
         count = Physics.OverlapSphereNonAlloc(transform.position, distance, colliders, layers, QueryTriggerInteraction.Collide);
-        Objects.Clear();
+        objects.Clear();
         for(int i = 0; i < count; ++i)
         {
             GameObject obj = colliders[i].gameObject;
             if(IsInSight(obj))
             {
-                Objects.Add(obj);
+                objects.Add(obj);
             }
         }
     }
@@ -68,6 +75,7 @@ public class AISensor : MonoBehaviour
         return true;
     }
 
+    //Create FOV mesh for enemy AI
     Mesh CreateWedgeMesh(){
         Mesh mesh = new Mesh();
         
@@ -145,11 +153,12 @@ public class AISensor : MonoBehaviour
 
     private void OnDrawGizmos()
     {
-        if(mesh)
+        /*if(mesh)
         {
             Gizmos.color = meshColor;
             Gizmos.DrawMesh(mesh,transform.position, transform.rotation);
         }
+        */
 
         Gizmos.DrawWireSphere(transform.position, distance);
         for(int i = 0; i < count; ++i)
