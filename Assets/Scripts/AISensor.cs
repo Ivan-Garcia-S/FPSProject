@@ -166,10 +166,11 @@ public class AISensor : MonoBehaviour
             Gizmos.DrawSphere(colliders[i].transform.position, 1.5f);
         }
 
-        Gizmos.color = Color.green;
+        /*Gizmos.color = Color.green;
         foreach(var obj in Objects)
         {
             Gizmos.DrawSphere(obj.transform.position, 1.5f);
         }
+        */
     }
 }

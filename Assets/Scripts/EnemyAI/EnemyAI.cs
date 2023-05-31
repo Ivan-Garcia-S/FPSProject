@@ -25,6 +25,8 @@ public class EnemyAI : MonoBehaviour
     public float timeBetweenAttacks;
     bool alreadyAttacked;
     public GameObject projectile;
+    private float spread;
+    private float upwardForce;
 
     //States
     public float sightRange, attackRange;
@@ -47,6 +49,8 @@ public class EnemyAI : MonoBehaviour
         patrolPoints = GameObject.Find("Patrol Points").GetComponentsInChildren<Transform>();
         foreach(Transform point in patrolPoints) Debug.Log(point.position);
         oldPosition = agent.transform.position;
+        spread = 0.1f;
+        upwardForce = 0f;
     }
 
     void Start(){
@@ -162,10 +166,22 @@ public class EnemyAI : MonoBehaviour
 
         if (!alreadyAttacked)
         {
+            Vector3 shootPoint = transform.Find("pistol3/Shoot Point").transform.position;
+            //Calculate direction from attackPoint to the targetPoint
+            Vector3 directionNoSpread = player.position - shootPoint;
+
+             //Calculate spread
+            float spreadX = Random.Range(-spread, spread);
+            float spreadY = Random.Range(-spread, spread);
+
+            //Direction with spread
+            Vector3 directionWithSpread = directionNoSpread + new Vector3(spreadX,spreadY,0); 
+            
             ///Attack code here
-            Rigidbody rb = Instantiate(projectile, transform.position, Quaternion.identity).GetComponent<Rigidbody>();
-            rb.AddForce(transform.forward * 32f, ForceMode.Impulse);
-            rb.AddForce(transform.up * 8f, ForceMode.Impulse);
+            Rigidbody rb = Instantiate(projectile, shootPoint, Quaternion.identity).GetComponent<Rigidbody>();
+
+            rb.AddForce(directionWithSpread.normalized * 100f, ForceMode.Impulse);
+            rb.AddForce(transform.Find("pistol3").transform.up * upwardForce, ForceMode.Impulse);
             ///End of attack code
 
             alreadyAttacked = true;
