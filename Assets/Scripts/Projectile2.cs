@@ -8,6 +8,7 @@ public class Projectile2 : MonoBehaviour
     public GameObject hitmark;
     public float damage = 20f;
     public float lifeSpan = 3f;
+    private PlayerState playerState;
 
     private void OnEnable() 
     {
@@ -16,7 +17,7 @@ public class Projectile2 : MonoBehaviour
         if(hitmark == null){
             Debug.Log("Hitmark null");
         }
-        
+        playerState = gameObject.GetComponentInParent<PlayerState>();
         gameObject.transform.parent = null;
         
     }
@@ -31,7 +32,7 @@ public class Projectile2 : MonoBehaviour
     {
         //Check if Player touching ground
         Debug.Log("Bullet hit");
-        if(collision.transform.tag == "Bot"){
+        if(collision.transform.tag == playerState.enemyTag){
             hitmark.GetComponent<Hitmarker>().botHit2();
             collision.transform.GetComponent<BotManager>().TakeDamage(damage);
         }

@@ -28,7 +28,9 @@ public class EnemySpawner : MonoBehaviour
     //Spawn bot at specific spawn point
     private void spawnAt(int i)
     {
+
         Instantiate(bot, spawnPoints[i].transform.position, spawnPoints[i].transform.rotation);
+        //bot.SendMessage("TeamSelect", teamName);
     }
 
 

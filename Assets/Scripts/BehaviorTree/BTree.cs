@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace BehaviorTree
 {
-    public abstract class BehaviorTree : MonoBehaviour
+    public abstract class BTree : MonoBehaviour
     {
         private Node _root = null;
 
@@ -17,6 +17,7 @@ namespace BehaviorTree
         private void Update() 
         {
             if(_root != null) _root.Evaluate();
+           // else Debug.Log("Root NULL");
         }
 
         protected abstract Node SetUpTree();

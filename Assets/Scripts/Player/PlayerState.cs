@@ -14,10 +14,13 @@ public class PlayerState : MonoBehaviour
     private float healthRegenAcceleration = 15f;
 
     public Image overlay;
+    public Sprite overlaySprite;
     public float duration;
     public float criticalStateDuration = 3.25f;
     public float fadeSpeed;
     private float durationTimer;
+    public string myTag = "Team1";
+    public string enemyTag = "Team2";
 
    
     // Start is called before the first frame update
@@ -27,7 +30,10 @@ public class PlayerState : MonoBehaviour
         criticalState = 0.2f * maxHealth;
         overlay.color = new Color(overlay.color.r, overlay.color.g, overlay.color.b, 0);
         healthRegenPerSecond = baseHealthRegenPerSecond;
-
+        gameObject.tag = myTag;
+        GameObject damOverlay = GameObject.Find("DamageOverlay");
+        Debug.Log(damOverlay + " = damOverlay");
+        overlaySprite = damOverlay.GetComponent<Sprite>();
     }
 
     // Update is called once per frame
@@ -89,7 +95,6 @@ public class PlayerState : MonoBehaviour
 
     void OnCollisionEnter(Collision collision)
     {
-        //Check if Player touching ground
         if(collision.transform.tag == "Bullet"){
             TakeDamage(collision.gameObject.GetComponent<EnemyProjectile>().damage);
         }

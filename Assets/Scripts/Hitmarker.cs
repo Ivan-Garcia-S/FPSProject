@@ -35,7 +35,6 @@ public class Hitmarker : MonoBehaviour
 
     void Update()
     {
-        Debug.Log("Time left = " + timeLeft);
         
         /*if(timeLeft>= 0){
             Debug.Log("Changing");
@@ -103,7 +102,7 @@ public class Hitmarker : MonoBehaviour
     }
 
     public void botHit2(){
-        Debug.Log("In Bot hit 2");
+       // Debug.Log("In Bot hit 2");
         if(timeLeft > 0){
             interruptHitmarker = true;
         }
@@ -113,7 +112,7 @@ public class Hitmarker : MonoBehaviour
         if(img.color == clear) img.color = white;
         else img.color = clear;
 
-        Debug.Log("color = " + img.color.ToString());
+     //   Debug.Log("color = " + img.color.ToString());
         //xInvoke(nameof(ResetJustHit), markerLifespan);
         //Debug.Log("After setting timeleft = " + timeLeft);
     }

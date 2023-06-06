@@ -7,7 +7,7 @@ public class PlayerMotor : MonoBehaviour
 {
 
     private CharacterController controller;
-    private Animator animator;
+    [SerializeField ]private Animator animator;
     private Vector3 playerVelocity;
     [SerializeField] private float speed = 6f;
     [SerializeField] private float gravity = -9.8f;
