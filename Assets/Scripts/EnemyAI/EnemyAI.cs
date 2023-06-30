@@ -17,7 +17,6 @@ public class EnemyAI : MonoBehaviour
 
     //State variables
     public float health;
-    public string myTag;
     public string enemyTag;
 
     //Patroling
@@ -26,6 +25,9 @@ public class EnemyAI : MonoBehaviour
     public float walkPointRange;
     private Vector3 oldPosition;
     public Transform[] patrolPoints;
+
+    //Chasing
+    public bool chasePointSet;
 
     //Attacking
     public float timeBetweenAttacks;
@@ -53,8 +55,8 @@ public class EnemyAI : MonoBehaviour
     */
     private void Awake()
     {
-        //enemyTag = (myTag == "Team1") ? "Team2" : "Team1";
-        //enemies = GameObject.FindGameObjectsWithTag(enemyTag);
+        enemyTag = (tag == "Team1") ? "Team2" : "Team1";
+        enemies = GameObject.FindGameObjectsWithTag(enemyTag);
         agent = GetComponent<NavMeshAgent>();
         sensor = GetComponent<AISensor>();
         detector = GetComponentInChildren<ViewconeDetection>();
@@ -87,10 +89,13 @@ public class EnemyAI : MonoBehaviour
 
     public void TeamName(string team)
     {
-        myTag = team;
-        gameObject.tag = myTag;
-        enemyTag = (myTag == "Team1") ? "Team2" : "Team1";
+        gameObject.tag = team;
+        enemyTag = (tag == "Team1") ? "Team2" : "Team1";
         enemies = GameObject.FindGameObjectsWithTag(enemyTag);
+        
+        Material blue = Resources.Load("Materials/Blue", typeof(Material)) as Material;
+        if(!blue)  Debug.LogWarning("Material not found");
+        if(tag == "Team1")  gameObject.GetComponent<Renderer>().material = blue;
 
     }
     
@@ -119,6 +124,7 @@ public class EnemyAI : MonoBehaviour
     {
         return transform.position;
     }
+
     private void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.red;

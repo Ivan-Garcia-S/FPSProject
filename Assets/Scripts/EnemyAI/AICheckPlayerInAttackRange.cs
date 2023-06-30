@@ -10,8 +10,8 @@ public class AICheckPlayerInAttackRange : Node
 {
     private EnemyAI AI;
 
-    public AICheckPlayerInAttackRange(EnemyAI ai){
-        AI = ai;
+    public AICheckPlayerInAttackRange(BotManager bot){
+        AI = bot.AI;
     }
 
     public override NodeState Evaluate()
@@ -19,7 +19,6 @@ public class AICheckPlayerInAttackRange : Node
         Collider[] enemiesInRadius = Physics.OverlapSphere(AI.transform.position, AI.attackRange, AI.whatIsPlayer);
         if(enemiesInRadius.Contains(AI.currentEnemyTarget.GetComponent<Collider>())) state = NodeState.SUCCESS;
         else state = NodeState.FAILURE;
-
         return state;
     }
 }

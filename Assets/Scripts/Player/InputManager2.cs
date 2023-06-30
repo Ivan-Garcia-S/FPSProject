@@ -47,7 +47,6 @@ public class InputManager2 : MonoBehaviour
     void FixedUpdate()
     {
         motor.ProcessMove(playerActions.Movement.ReadValue<Vector2>());
-        motor.processCrouch();
     }
 
     void LateUpdate() {

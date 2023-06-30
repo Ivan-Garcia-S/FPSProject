@@ -34,7 +34,7 @@ public class Projectile2 : MonoBehaviour
         Debug.Log("Bullet hit");
         if(collision.transform.tag == playerState.enemyTag){
             hitmark.GetComponent<Hitmarker>().botHit2();
-            collision.transform.GetComponent<BotManager>().TakeDamage(damage);
+            collision.transform.GetComponentInParent<BotManager>().TakeDamage(damage);
         }
         Destroy(gameObject);
     }

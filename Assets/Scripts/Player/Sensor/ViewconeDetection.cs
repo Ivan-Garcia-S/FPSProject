@@ -71,7 +71,16 @@ public class ViewconeDetection : MonoBehaviour {
 			visibleEnemies.Remove(col.gameObject);	//Remove from list of visible enemies
 			if(AI.currentEnemyTarget == col.gameObject.transform)
 			{
-				AI.currentEnemyTarget = visibleEnemies.Count > 0 ? visibleEnemies[0].transform : null;
+				Transform oldTarget = AI.currentEnemyTarget;
+				foreach(GameObject visibleEnemy in visibleEnemies)
+				{
+					if(visibleEnemy != null)
+					{
+						AI.currentEnemyTarget = visibleEnemy.transform;
+						break;
+					} 
+				}
+				if(AI.currentEnemyTarget == oldTarget)  AI.currentEnemyTarget = null;
 			}
 			if(visibleEnemies.Count == 0) alertIcon.SetActive (false);
 		} 

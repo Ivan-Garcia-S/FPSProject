@@ -13,9 +13,7 @@ public class PlayerMotor : MonoBehaviour
     [SerializeField] private float gravity = -9.8f;
     private bool isGrounded;
     private float jumpHeight = 1.2f;
-    private bool lerpCrouch = false;
     private bool crouching = false;
-    private float crouchTimer = 1f;
     private bool sprinting;
     private float crouchMultiplier = 0.5f;
   
@@ -42,7 +40,26 @@ public class PlayerMotor : MonoBehaviour
         moveDirection.z = input.y;
         
         //If not moving, turn off sprinting
-        if(moveDirection == Vector3.zero) StopSprint();
+        if(moveDirection == Vector3.zero)
+        {
+            StopMovementExceptFor("idle");
+        }
+        else if(moveDirection.z == 0 && moveDirection.x > 0)
+        {
+            StopMovementExceptFor("strafeRight");
+        }
+        else if(moveDirection.z == 0 && moveDirection.x < 0)
+        {
+            StopMovementExceptFor("strafeLeft");
+        }
+        else if(moveDirection.z < 0){
+            StopMovementExceptFor("moveBackwards");
+        }
+        else if (moveDirection.z > 0)
+        {
+            //Don't want to stop sprinting for this one
+            StopMovementExceptFor("move", false);
+        }
         
         float trueSpeed = speed;
         if(crouching){
@@ -58,28 +75,6 @@ public class PlayerMotor : MonoBehaviour
 
     }
 
-     public void processCrouch()
-    {
-        //Perform crouch when button pressed
-        if(lerpCrouch){
-            crouchTimer += Time.deltaTime;
-            float p = crouchTimer / 1;
-            p *= p;
-            if (crouching){
-                ChangeParentScale(transform,new Vector3(transform.localScale.x, Mathf.Lerp(transform.localScale.y, .6f, p), transform.localScale.z));
-            }
-            
-            else{
-                ChangeParentScale(transform, new Vector3(transform.localScale.x, Mathf.Lerp(transform.localScale.y, 1, p), transform.localScale.z));
-            }
-            if (p > 1)
-            {
-                lerpCrouch = false;
-                crouchTimer = 0f;
-            }
-        }
-    }
-
     public void Crouch()
     {
         //First stop sprinting if trying to crouch
@@ -88,8 +83,7 @@ public class PlayerMotor : MonoBehaviour
         }
         //Signal to crouch
         crouching = !crouching;  
-        crouchTimer = 0;
-        lerpCrouch = true;
+        animator.SetBool("crouched", crouching);
     }
 
     public void Jump()
@@ -115,31 +109,50 @@ public class PlayerMotor : MonoBehaviour
 
     public void Sprint()
     {
+        //If crouching uncrouch
         if (crouching){
             Crouch();
         }
         //Only change sprint if not ADS and not in air
-        if(!animator.GetBool("aimingDown") && isGrounded){
+        if(!animator.GetBool("aimingDown") && isGrounded)
+        {
             sprinting = !sprinting;
-            animator.SetBool("isSprinting",sprinting);
-            //If crouching uncrouch
+            if(sprinting)
+            {
+                //Stop reload if necessary
+                if(gameObject.GetComponentInChildren<WeaponManager2>().reloading) gameObject.GetComponentInChildren<WeaponManager2>().CancelReload();
+                animator.SetBool("strafeLeft", false);
+                animator.SetBool("strafeRight", false);
+                animator.SetBool("move",false);
+            }
             
-            if(sprinting){
-                speed = 7;
-            }
-            else{
-                speed = 4;
-            }
+            animator.SetBool("run",sprinting);
+            
+            
+            speed = sprinting ? 7 : 4;
         }
     }
 
     public void StopSprint()
     {
-        animator.SetBool("isSprinting",false);
-        if(sprinting) 
-        {
-            sprinting = false;
-            speed = 4;
-        }
+        animator.SetBool("run", false);
+        sprinting = false;
+        speed = 4;      
+    }
+
+    public void StopMovementExceptFor(string exception, bool stopSprint=true)
+    {
+        if(stopSprint) StopSprint();
+        animator.SetBool("strafeRight", false);
+        animator.SetBool("move", false);
+        animator.SetBool("strafeLeft", false);
+        animator.SetBool("moveBackwards", false);
+        animator.SetBool("idle", false);
+        animator.SetBool(exception, true);
+    }
+
+    public bool isCrouched()
+    {
+        return crouching;
     }
 }

@@ -32,7 +32,7 @@ public class PlayerState : MonoBehaviour
         healthRegenPerSecond = baseHealthRegenPerSecond;
         gameObject.tag = myTag;
         GameObject damOverlay = GameObject.Find("DamageOverlay");
-        Debug.Log(damOverlay + " = damOverlay");
+        //Debug.Log(damOverlay + " = damOverlay");
         overlaySprite = damOverlay.GetComponent<Sprite>();
     }
 
@@ -96,7 +96,8 @@ public class PlayerState : MonoBehaviour
     void OnCollisionEnter(Collision collision)
     {
         if(collision.transform.tag == "Bullet"){
-            TakeDamage(collision.gameObject.GetComponent<EnemyProjectile>().damage);
+            if(collision.gameObject.GetComponent<EnemyProjectile>() != null)
+                TakeDamage(collision.gameObject.GetComponent<EnemyProjectile>().damage);
         }
     }
 }

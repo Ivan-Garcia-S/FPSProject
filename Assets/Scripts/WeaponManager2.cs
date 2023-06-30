@@ -30,7 +30,7 @@ public class WeaponManager2: MonoBehaviour
 
     int bulletsLeft, bulletsShot;
 
-    bool shooting, readyToShoot, reloading;
+    public bool shooting, readyToShoot, reloading;
     public bool allowInvoke = true;
 
     [Header("Aiming in")]
@@ -54,6 +54,7 @@ public class WeaponManager2: MonoBehaviour
         isAutomatic = false;
         isAimingIn = false;
         motor = GetComponentInParent<PlayerMotor>();
+        animator = GetComponentInParent<Animator>();
 
     }
 
@@ -77,9 +78,6 @@ public class WeaponManager2: MonoBehaviour
         if(animator.GetBool("aimingDown")) crosshair.SetActive(false);
         else crosshair.SetActive(true);
         
-
-        
-
         //Set ammo display
         if(ammoDisplay != null) ammoDisplay.SetText(bulletsLeft / bulletsPerTap + " / " + magazineSize / bulletsPerTap);
     }
@@ -100,7 +98,7 @@ public class WeaponManager2: MonoBehaviour
 
     private void Shoot()
     {
-        animator.SetBool("shooting", true);
+        animator.SetBool("shoot", true);
         motor.StopSprint();
         //Debug.Log("shooting: " + animator.GetBool("shooting"));
 
@@ -161,12 +159,13 @@ public class WeaponManager2: MonoBehaviour
         //Allow shooting and Invoking again
         readyToShoot = true;
         allowInvoke = true;
-        animator.SetBool("shooting", false);
+        animator.SetBool("shoot", false);
 
     }
 
     public void Reload()
     {
+        animator.SetTrigger("reload");
         reloading = true;
         Invoke("ReloadFinished", reloadTime);
     }
@@ -174,6 +173,13 @@ public class WeaponManager2: MonoBehaviour
     private void ReloadFinished()
     {
         bulletsLeft = magazineSize;
+        reloading = false;
+    }
+
+    public void CancelReload()
+    {
+        CancelInvoke("ReloadFinished");
+        animator.SetTrigger("stopReload");
         reloading = false;
     }
 

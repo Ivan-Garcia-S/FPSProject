@@ -6,8 +6,8 @@ using BehaviorTree;
 
 public class EnemyBT : BTree
 {
-    
-    public EnemyAI AI;
+    public BotManager botManager;
+    //public EnemyAI AI;
 
     protected override Node SetUpTree()
     {
@@ -15,19 +15,19 @@ public class EnemyBT : BTree
         {
             //ATTACK
             new Sequence(new List<Node>{
-                new AICheckPlayerInSight(AI),
-                new AICheckPlayerInAttackRange(AI),
-                new AIAttack(AI)
+                new AICheckPlayerInSight(botManager),
+                new AICheckPlayerInAttackRange(botManager),
+                new AIAttack(botManager)
             }),
 
             //CHASE
             new Sequence(new List<Node>
             {
-                new AICheckPlayerInSight(AI),
-                new AIChase(AI)
+                new AICheckPlayerInSight(botManager),
+                new AIChase(botManager)
             }),
             //PATROL
-            new AIPatrol(AI),
+            new AIPatrol(botManager),
         });
 
         return root;

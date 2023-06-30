@@ -7,9 +7,9 @@ using BehaviorTree;
 public class AICheckPlayerInSight : Node
 {
     public EnemyAI AI;
-    public AICheckPlayerInSight(EnemyAI ai)
+    public AICheckPlayerInSight(BotManager bot)
     {
-        AI = ai;
+        AI = bot.AI;
     }
 
     public override NodeState Evaluate()

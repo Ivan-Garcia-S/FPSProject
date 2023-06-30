@@ -3,7 +3,12 @@ guid: 1356fb5fcd4464ef0bae9abc19545f0e
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - bot: {instanceID: 0}
+  - AI: {instanceID: 0}
+  - animator: {instanceID: 0}
+  - destinationPointBox: {instanceID: 0}
+  - patrolPointObj: {fileID: 2992859987511118548, guid: c47689e5f90c94d00bb72c2f7c8c3136, type: 3}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

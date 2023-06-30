@@ -7,7 +7,7 @@ public class GameManager : MonoBehaviour
     public GameObject player;
     public GameObject ai;
     public GameObject startSpawnPoints;
-    public int teamSize = 3;
+    public int teamSize = 5;
     public string team1 = "Team1";
     public static string team2 = "Team2";
     
@@ -24,7 +24,8 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
-        SpawnTeams();
+        ////////////Testing/////////////
+        //SpawnTeams();
     }
 
     // Update is called once per frame
