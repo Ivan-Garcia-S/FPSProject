@@ -24,6 +24,7 @@ public class PlayerMotor : MonoBehaviour
         controller = GetComponent<CharacterController>();
         animator = GetComponentInChildren<Animator>();
         sprinting = false;
+        
     }
 
     // Update is called once per frame
@@ -113,8 +114,8 @@ public class PlayerMotor : MonoBehaviour
         if (crouching){
             Crouch();
         }
-        //Only change sprint if not ADS and not in air
-        if(!animator.GetBool("aimingDown") && isGrounded)
+        //Only change sprint if not ADS and not in air and not idle
+        if(!animator.GetBool("aimingDown") && isGrounded && !animator.GetBool("idle"))
         {
             sprinting = !sprinting;
             if(sprinting)
