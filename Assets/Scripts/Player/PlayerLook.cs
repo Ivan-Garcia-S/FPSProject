@@ -23,10 +23,6 @@ public class PlayerLook : MonoBehaviour
 
         skinnedMesh = transform.GetComponentInChildren<SkinnedMeshRenderer>();
         Transform[] bones = skinnedMesh.bones;
-        foreach(Transform bone in bones)
-        {
-            Debug.Log(bone.name);
-        }
         //left = Array.FindIndex(bones, b => b.name == "Upper")
         leftArm = GameObject.Find("Bip01_L_UpperArm");
         rightArm = GameObject.Find("Bip01_R_UpperArm");

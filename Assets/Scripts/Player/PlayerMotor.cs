@@ -7,7 +7,7 @@ public class PlayerMotor : MonoBehaviour
 {
 
     private CharacterController controller;
-    [SerializeField ]private Animator animator;
+    [SerializeField ] private Animator animator;
     private Vector3 playerVelocity;
     [SerializeField] private float speed = 6f;
     [SerializeField] private float gravity = -9.8f;
@@ -54,7 +54,7 @@ public class PlayerMotor : MonoBehaviour
             StopMovementExceptFor("strafeLeft");
         }
         else if(moveDirection.z < 0){
-            StopMovementExceptFor("moveBackwards");
+            StopMovementExceptFor("moveBack");
         }
         else if (moveDirection.z > 0)
         {
@@ -147,7 +147,7 @@ public class PlayerMotor : MonoBehaviour
         animator.SetBool("strafeRight", false);
         animator.SetBool("move", false);
         animator.SetBool("strafeLeft", false);
-        animator.SetBool("moveBackwards", false);
+        animator.SetBool("moveBack", false);
         animator.SetBool("idle", false);
         animator.SetBool(exception, true);
     }

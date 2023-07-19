@@ -14,7 +14,9 @@ public class WeaponManager2: MonoBehaviour
     public float maxRange = 100f;
     public Animator animator;
     //public float damage = 20f;
+
     //References
+    public GameObject sphere;
     public GameObject bullet;
     public Camera fpsCam;
     public Transform attackPoint;
@@ -32,6 +34,8 @@ public class WeaponManager2: MonoBehaviour
 
     public bool shooting, readyToShoot, reloading;
     public bool allowInvoke = true;
+
+    private Vector3 shootPointOffset = new Vector3(0.0022f,0.0237f,0.1061f);
 
     [Header("Aiming in")]
     public bool isAimingIn;
@@ -55,6 +59,7 @@ public class WeaponManager2: MonoBehaviour
         isAimingIn = false;
         motor = GetComponentInParent<PlayerMotor>();
         animator = GetComponentInParent<Animator>();
+        sphere = GameObject.Find("Sphere");
 
     }
 
@@ -74,6 +79,12 @@ public class WeaponManager2: MonoBehaviour
         }
         //CalculateAimIn();
 
+        /*Debug.Log("attackPoint pos (1)= " + attackPoint.transform.position);
+        Debug.Log("attackPoint pos (2)= " + attackPoint.transform.position);
+        Debug.Log("attackPoint pos (3)= " + attackPoint.transform.position);
+        Debug.Log("attackPoint pos (4)= " + attackPoint.transform.position);
+        Debug.Log("attackPoint pos (5)= " + attackPoint.transform.position);
+        */
         //Remove crosshair if aiming down sights
         if(animator.GetBool("aimingDown")) crosshair.SetActive(false);
         else crosshair.SetActive(true);
@@ -114,7 +125,7 @@ public class WeaponManager2: MonoBehaviour
         else targetPoint = ray.GetPoint(75);
 
         //Calculate direction from attackPoint to the targetPoint
-        Vector3 directionNoSpread = targetPoint - attackPoint.position;
+        Vector3 directionNoSpread = targetPoint - (transform.position + shootPointOffset);
 
         //Calculate spread
         float spreadX = Random.Range(-spread, spread);
@@ -123,8 +134,15 @@ public class WeaponManager2: MonoBehaviour
         //Direction with spread
         Vector3 directionWithSpread = directionNoSpread + new Vector3(spreadX,spreadY,0); 
 
+        Debug.Log("Instantiating at" + attackPoint.transform.position);
         //Instantiate bullet
-        GameObject currentBullet = Instantiate(bullet, attackPoint.position, Quaternion.identity, gameObject.transform);
+        GameObject currentBullet = Instantiate(bullet, attackPoint.transform.position, attackPoint.transform.rotation);
+       
+        //GameObject currentBullet = Instantiate(bullet, attackPoint.transform, false);
+
+        /////DEBUG///////
+
+        /*
         //Rotate bullet to shoot direction
         currentBullet.transform.forward = directionWithSpread.normalized;
 
@@ -132,6 +150,9 @@ public class WeaponManager2: MonoBehaviour
         currentBullet.GetComponent<Rigidbody>().AddForce(directionWithSpread.normalized * shootForce, ForceMode.Impulse);
         //Upward force for grenades that bounce
         currentBullet.GetComponent<Rigidbody>().AddForce(fpsCam.transform.up * upwardForce, ForceMode.Impulse);
+
+        */
+        //////END DEBUG/////////
 
         //Instantiate muzzle flash
         if(muzzleFlash != null) Instantiate(muzzleFlash, attackPoint.position, Quaternion.identity);

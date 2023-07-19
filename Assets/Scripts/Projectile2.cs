@@ -7,7 +7,7 @@ public class Projectile2 : MonoBehaviour
     public GameObject bullet;
     public GameObject hitmark;
     public float damage = 20f;
-    public float lifeSpan = 3f;
+    public float lifeSpan = 999f;
     private PlayerState playerState;
 
     private void OnEnable() 
