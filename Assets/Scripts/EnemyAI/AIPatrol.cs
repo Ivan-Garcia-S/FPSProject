@@ -24,7 +24,7 @@ public class AIPatrol : Node
     public override NodeState Evaluate()
     {
         AI.state = EnemyAI.PlayerState.PATROLING;
-        Debug.Log("PATROLING");
+        //Debug.Log("PATROLING");
         AI.chasePointSet = false;
         if (!AI.walkPointSet) SearchWalkPoint();
 
@@ -34,7 +34,7 @@ public class AIPatrol : Node
             BotAnimator.SetBool("move", true);
             Agent.destination = AI.walkPoint;//SetDestination(walkPoint);
             DestinationBox.transform.position = AI.walkPoint;
-            Debug.Log("Path is " + Agent.pathStatus);
+            //Debug.Log("Path is " + Agent.pathStatus);
         }
         Vector3 distanceToWalkPoint = AI.transform.position - AI.walkPoint;
 
@@ -43,7 +43,7 @@ public class AIPatrol : Node
         {
             BotAnimator.SetBool("move", false);
             BotAnimator.SetBool("idle", true);
-            Debug.Log("Within close proximity of point");
+            //Debug.Log("Within close proximity of point");
             AI.walkPointSet = false;
         }
         state = NodeState.RUNNING;
@@ -68,7 +68,7 @@ public class AIPatrol : Node
     
         //New walkpoint method
         int pointNum = Random.Range(0, PatrolPoints.Length);
-        Debug.Log("Point" + (pointNum + 1) + " chosen");
+        //Debug.Log("Point" + (pointNum + 1) + " chosen");
         AI.walkPoint = PatrolPoints[pointNum].position;
         AI.walkPointSet = true;
         

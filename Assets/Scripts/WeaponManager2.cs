@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using TMPro;
+using UnityEngine.Animations.Rigging;
 
 public class WeaponManager2: MonoBehaviour
 {
-    public GameObject playerCam;
     public Hitmarker hitmark;
     public PlayerMotor motor;
     public GameObject crosshair;
@@ -40,6 +40,7 @@ public class WeaponManager2: MonoBehaviour
     [Header("Aiming in")]
     public bool isAimingIn;
     public Transform sightTarget;
+    private OverrideTransform ads;
     public float sightOffset;
     public float aimInTime;
     private Vector3 weaponSwayPosition;
@@ -60,7 +61,7 @@ public class WeaponManager2: MonoBehaviour
         motor = GetComponentInParent<PlayerMotor>();
         animator = GetComponentInParent<Animator>();
         sphere = GameObject.Find("Sphere");
-
+        ads = GameObject.Find("ADS").GetComponent<OverrideTransform>();
     }
 
     // Update is called once per frame
@@ -134,15 +135,12 @@ public class WeaponManager2: MonoBehaviour
         //Direction with spread
         Vector3 directionWithSpread = directionNoSpread + new Vector3(spreadX,spreadY,0); 
 
-        Debug.Log("Instantiating at" + attackPoint.transform.position);
         //Instantiate bullet
         GameObject currentBullet = Instantiate(bullet, attackPoint.transform.position, attackPoint.transform.rotation);
        
         //GameObject currentBullet = Instantiate(bullet, attackPoint.transform, false);
 
-        /////DEBUG///////
-
-        /*
+        
         //Rotate bullet to shoot direction
         currentBullet.transform.forward = directionWithSpread.normalized;
 
@@ -151,9 +149,7 @@ public class WeaponManager2: MonoBehaviour
         //Upward force for grenades that bounce
         currentBullet.GetComponent<Rigidbody>().AddForce(fpsCam.transform.up * upwardForce, ForceMode.Impulse);
 
-        */
-        //////END DEBUG/////////
-
+        
         //Instantiate muzzle flash
         if(muzzleFlash != null) Instantiate(muzzleFlash, attackPoint.position, Quaternion.identity);
         
@@ -206,15 +202,21 @@ public class WeaponManager2: MonoBehaviour
 
     public void AimingInPressed()
     {
+        Debug.Log("In AIMIN FUNC");
         animator.SetBool("aimingDown",true);
         isAimingIn = true;
         motor.StopSprint();
+
+        //Ray ray = fpsCam.ViewportPointToRay(new Vector3(0.5f,0.5f, 0));
+        //sightTarget.transform.position = ray.GetPoint(0);
+        ads.weight = 1;
     }
 
     public void AimingInReleased()
     {
         animator.SetBool("aimingDown",false);
         isAimingIn = false;
+        ads.weight = 0;
     }
 
     private void CalculateAimIn()
@@ -223,7 +225,7 @@ public class WeaponManager2: MonoBehaviour
         
         if(isAimingIn){
             //Debug.Log("CALCUlATE NEW AIM IN");
-            targetPosition = playerCam.transform.position;
+            targetPosition = fpsCam.transform.position;
         }
         weaponSwayPosition = weaponSwayObj.transform.position;
         weaponSwayPosition = Vector3.SmoothDamp(weaponSwayPosition,targetPosition, ref weaponSwayPositionVelocity, aimInTime);

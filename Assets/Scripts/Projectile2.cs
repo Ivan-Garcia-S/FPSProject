@@ -17,7 +17,7 @@ public class Projectile2 : MonoBehaviour
         if(hitmark == null){
             Debug.Log("Hitmark null");
         }
-        playerState = gameObject.GetComponentInParent<PlayerState>();
+        playerState = GameObject.Find("Player").GetComponentInChildren<PlayerState>();
         gameObject.transform.parent = null;
         
     }
@@ -30,8 +30,7 @@ public class Projectile2 : MonoBehaviour
 
     void OnCollisionEnter(Collision collision)
     {
-        //Check if Player touching ground
-        Debug.Log("Bullet hit");
+        //Check if bulet hit enemy soldier
         if(collision.transform.tag == playerState.enemyTag){
             hitmark.GetComponent<Hitmarker>().botHit2();
             collision.transform.GetComponentInParent<BotManager>().TakeDamage(damage);

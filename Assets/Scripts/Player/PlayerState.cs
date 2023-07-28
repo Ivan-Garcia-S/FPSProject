@@ -20,7 +20,7 @@ public class PlayerState : MonoBehaviour
     public float fadeSpeed;
     private float durationTimer;
     public string myTag = "Team1";
-    public string enemyTag = "Team2";
+    public string enemyTag;
 
    
     // Start is called before the first frame update
@@ -34,6 +34,7 @@ public class PlayerState : MonoBehaviour
         GameObject damOverlay = GameObject.Find("DamageOverlay");
         //Debug.Log(damOverlay + " = damOverlay");
         overlaySprite = damOverlay.GetComponent<Sprite>();
+        enemyTag = "Team2";
     }
 
     // Update is called once per frame

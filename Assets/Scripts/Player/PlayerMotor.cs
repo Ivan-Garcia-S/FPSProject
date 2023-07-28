@@ -7,6 +7,7 @@ public class PlayerMotor : MonoBehaviour
 {
 
     private CharacterController controller;
+    //private CharacterController controller;
     [SerializeField ] private Animator animator;
     private Vector3 playerVelocity;
     [SerializeField] private float speed = 6f;
@@ -18,18 +19,23 @@ public class PlayerMotor : MonoBehaviour
     private float crouchMultiplier = 0.5f;
   
 
+    /////DEBUG/////
+    GameObject head;
+
     // Start is called before the first frame update
     void Start()
     {
         controller = GetComponent<CharacterController>();
+        //controller = GameObject.Find("Player").GetComponent<CharacterController>();
         animator = GetComponentInChildren<Animator>();
         sprinting = false;
-        
+       // head = GetComponentInChildren<ParticleSystem>().gameObject;
     }
 
     // Update is called once per frame
     void Update()
     {
+       // Debug.Log("Sphere at " + head.transform.position + ", rotation at " + head.transform.rotation);
         isGrounded = controller.isGrounded;
     }
     //Recieve input for InputManager.cs and apply them to character controller
