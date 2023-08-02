@@ -17,7 +17,7 @@ public class Projectile2 : MonoBehaviour
         if(hitmark == null){
             Debug.Log("Hitmark null");
         }
-        playerState = GameObject.Find("Player").GetComponentInChildren<PlayerState>();
+        playerState = GameObject.Find("Soldier_M").GetComponentInChildren<PlayerState>();
         gameObject.transform.parent = null;
         
     }

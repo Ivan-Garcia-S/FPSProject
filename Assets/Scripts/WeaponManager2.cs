@@ -18,8 +18,10 @@ public class WeaponManager2: MonoBehaviour
     //References
     public GameObject sphere;
     public GameObject bullet;
+    public GameObject gun;
     public Camera fpsCam;
     public Transform attackPoint;
+    public Transform camGunPoint;
     //Graphics
     public GameObject muzzleFlash;
     public TextMeshProUGUI ammoDisplay;
@@ -36,13 +38,21 @@ public class WeaponManager2: MonoBehaviour
     public bool allowInvoke = true;
 
     private Vector3 shootPointOffset = new Vector3(0.0022f,0.0237f,0.1061f);
+    // = new Vector3(-0.050999999f,0.151999995f,0.0189999994f);
+
+    private Coroutine startADS;
+    private Coroutine stopADS;
 
     [Header("Aiming in")]
     public bool isAimingIn;
     public Transform sightTarget;
+    public Transform originalGunSpot;
     private OverrideTransform ads;
     public float sightOffset;
     public float aimInTime;
+    public bool adsComplete = false;
+    private float timeElapsed;
+    private Vector3 initialADSPosition;
     private Vector3 weaponSwayPosition;
     private Vector3 weaponSwayPositionVelocity;
     [SerializeField] private Transform weaponSwayObj;
@@ -62,6 +72,7 @@ public class WeaponManager2: MonoBehaviour
         animator = GetComponentInParent<Animator>();
         sphere = GameObject.Find("Sphere");
         ads = GameObject.Find("ADS").GetComponent<OverrideTransform>();
+        //originalGunSpot = transform.localPosition;
     }
 
     // Update is called once per frame
@@ -80,6 +91,28 @@ public class WeaponManager2: MonoBehaviour
         }
         //CalculateAimIn();
 
+        /*if(isAimingIn)
+        {
+            if (timeElapsed < aimInTime)
+            {
+                transform.position = Vector3.Lerp(transform.position, camGunPoint.transform.position, timeElapsed / aimInTime);
+                timeElapsed += Time.deltaTime;
+            }
+            else
+            {
+                transform.position = camGunPoint.transform.position;
+            }
+
+            //transform.position = camGunPoint.transform.position;//fpsCam.transform.position + new Vector3(0,0,0.5f);
+            transform.rotation = fpsCam.transform.rotation;
+        }
+        */
+        if(adsComplete)
+        {
+            transform.position = sightTarget.position;
+            transform.rotation = fpsCam.transform.rotation;
+        }
+
         /*Debug.Log("attackPoint pos (1)= " + attackPoint.transform.position);
         Debug.Log("attackPoint pos (2)= " + attackPoint.transform.position);
         Debug.Log("attackPoint pos (3)= " + attackPoint.transform.position);
@@ -90,6 +123,8 @@ public class WeaponManager2: MonoBehaviour
         if(animator.GetBool("aimingDown")) crosshair.SetActive(false);
         else crosshair.SetActive(true);
         
+        //AimDownSights();
+
         //Set ammo display
         if(ammoDisplay != null) ammoDisplay.SetText(bulletsLeft / bulletsPerTap + " / " + magazineSize / bulletsPerTap);
     }
@@ -200,24 +235,86 @@ public class WeaponManager2: MonoBehaviour
         reloading = false;
     }
 
+
+    private void AimDownSights()
+    {
+        if(isAimingIn)  transform.localPosition = Vector3.Lerp(initialADSPosition, sightTarget.position, timeElapsed / aimInTime);//Time.deltaTime * adsSpeed);
+        
+        else transform.localPosition = Vector3.Lerp(initialADSPosition, originalGunSpot.position, timeElapsed / aimInTime);//Time.deltaTime * adsSpeed);
+    }
     public void AimingInPressed()
     {
-        Debug.Log("In AIMIN FUNC");
-        animator.SetBool("aimingDown",true);
-        isAimingIn = true;
-        motor.StopSprint();
+        Debug.Log("In ADS PRESS");
+        if(!reloading)
+        {
+            isAimingIn = true;
+            if(stopADS != null) StopCoroutine(stopADS);
+            //initialADSPosition = transform.position;
+            animator.SetBool("aimingDown",true);
+            
+            motor.StopSprint();
+            startADS = StartCoroutine(ADS());
+        }
+        
+        //gameObject.transform.position = fpsCam.transform.position + new Vector3(0,0,1);
+        
 
         //Ray ray = fpsCam.ViewportPointToRay(new Vector3(0.5f,0.5f, 0));
         //sightTarget.transform.position = ray.GetPoint(0);
-        ads.weight = 1;
+        //ads.weight = 1;
+    }
+
+    IEnumerator ADS()
+    {
+        //if(timeElapsed != 0) timeElapsed = aimInTime - timeElapsed;
+        timeElapsed = 0;
+        initialADSPosition = transform.position;
+        while (timeElapsed < aimInTime)
+        {
+            transform.rotation = fpsCam.transform.rotation;
+            transform.position = Vector3.Lerp(initialADSPosition, sightTarget.position, timeElapsed / aimInTime);
+            timeElapsed += Time.deltaTime;
+            yield return null;
+        }
+        if(isAimingIn)
+        {
+            transform.position = sightTarget.position;
+            adsComplete = true;
+        }
+       
     }
 
     public void AimingInReleased()
     {
-        animator.SetBool("aimingDown",false);
+        Debug.Log("In ADS released");
         isAimingIn = false;
-        ads.weight = 0;
+        if(startADS != null) StopCoroutine(startADS);
+        adsComplete = false;
+        //initialADSPosition = transform.position;
+        animator.SetBool("aimingDown",false);
+        
+        
+        stopADS = StartCoroutine(exitADS());
+        //transform.position = originalGunSpot;
+        //ads.weight = 0;
     }
+
+    IEnumerator exitADS()
+    {
+        timeElapsed = 0;
+        initialADSPosition = transform.position;
+        while (timeElapsed < aimInTime)
+        {
+            transform.rotation = fpsCam.transform.rotation;
+            transform.position = Vector3.Lerp(initialADSPosition, originalGunSpot.position, timeElapsed / aimInTime);
+            timeElapsed += Time.deltaTime;
+            yield return null;
+        }
+        if(!isAimingIn)
+        {
+            transform.position = originalGunSpot.position;
+    }   }
+        
 
     private void CalculateAimIn()
     {
