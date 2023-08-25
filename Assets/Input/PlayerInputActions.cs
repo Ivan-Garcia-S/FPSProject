@@ -107,6 +107,15 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Prone"",
+                    ""type"": ""Button"",
+                    ""id"": ""589be654-ee7b-4761-adb7-bc40fa7ed9e9"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -323,7 +332,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""name"": """",
                     ""id"": ""a5e56693-e6cc-48a4-96c0-2d5c1cc3c7a8"",
                     ""path"": ""<Keyboard>/leftCtrl"",
-                    ""interactions"": """",
+                    ""interactions"": ""Tap"",
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""Crouch"",
@@ -334,7 +343,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""name"": """",
                     ""id"": ""563fbd7d-ff6e-4b43-9a79-0088b1ceb8a7"",
                     ""path"": ""<Gamepad>/buttonEast"",
-                    ""interactions"": """",
+                    ""interactions"": ""Tap"",
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""Crouch"",
@@ -450,6 +459,28 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""action"": ""ADSRelease"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""35b0e147-e5a9-46c3-9d1c-297ac5cb3129"",
+                    ""path"": ""<Keyboard>/leftCtrl"",
+                    ""interactions"": ""Hold(duration=0.28)"",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Prone"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""cad7ef28-624b-437e-8f0f-ffe4a769ea2f"",
+                    ""path"": ""<Gamepad>/buttonEast"",
+                    ""interactions"": ""Hold(duration=0.28)"",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Prone"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -467,6 +498,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         m_Player_Reload = m_Player.FindAction("Reload", throwIfNotFound: true);
         m_Player_ADSPress = m_Player.FindAction("ADSPress", throwIfNotFound: true);
         m_Player_ADSRelease = m_Player.FindAction("ADSRelease", throwIfNotFound: true);
+        m_Player_Prone = m_Player.FindAction("Prone", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -537,6 +569,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Reload;
     private readonly InputAction m_Player_ADSPress;
     private readonly InputAction m_Player_ADSRelease;
+    private readonly InputAction m_Player_Prone;
     public struct PlayerActions
     {
         private @PlayerInputActions m_Wrapper;
@@ -550,6 +583,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         public InputAction @Reload => m_Wrapper.m_Player_Reload;
         public InputAction @ADSPress => m_Wrapper.m_Player_ADSPress;
         public InputAction @ADSRelease => m_Wrapper.m_Player_ADSRelease;
+        public InputAction @Prone => m_Wrapper.m_Player_Prone;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -586,6 +620,9 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             @ADSRelease.started += instance.OnADSRelease;
             @ADSRelease.performed += instance.OnADSRelease;
             @ADSRelease.canceled += instance.OnADSRelease;
+            @Prone.started += instance.OnProne;
+            @Prone.performed += instance.OnProne;
+            @Prone.canceled += instance.OnProne;
         }
 
         private void UnregisterCallbacks(IPlayerActions instance)
@@ -617,6 +654,9 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             @ADSRelease.started -= instance.OnADSRelease;
             @ADSRelease.performed -= instance.OnADSRelease;
             @ADSRelease.canceled -= instance.OnADSRelease;
+            @Prone.started -= instance.OnProne;
+            @Prone.performed -= instance.OnProne;
+            @Prone.canceled -= instance.OnProne;
         }
 
         public void RemoveCallbacks(IPlayerActions instance)
@@ -645,5 +685,6 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         void OnReload(InputAction.CallbackContext context);
         void OnADSPress(InputAction.CallbackContext context);
         void OnADSRelease(InputAction.CallbackContext context);
+        void OnProne(InputAction.CallbackContext context);
     }
 }

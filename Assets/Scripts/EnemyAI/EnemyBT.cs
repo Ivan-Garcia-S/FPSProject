@@ -17,6 +17,8 @@ public class EnemyBT : BTree
             new Sequence(new List<Node>{
                 new AICheckPlayerInSight(botManager),
                 new AICheckPlayerInAttackRange(botManager),
+                new AIStrafe(botManager),
+                new AIGoProne(botManager),
                 new AIAttack(botManager)
             }),
 

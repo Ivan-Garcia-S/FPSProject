@@ -1,11 +1,11 @@
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.Animations.Rigging;
 
 public class EnemyAI : MonoBehaviour
 {
     //AI detection variables
     public NavMeshAgent agent;
-    public AISensor sensor;
     public ViewconeDetection detector;
 
     //Enemy transforms
@@ -18,6 +18,7 @@ public class EnemyAI : MonoBehaviour
     //State variables
     public float health;
     public string enemyTag;
+    public bool isProne;
 
     //Patroling
     public Vector3 walkPoint;
@@ -29,18 +30,28 @@ public class EnemyAI : MonoBehaviour
     //Chasing
     public bool chasePointSet;
 
-    //Attacking
-    public float timeBetweenAttacks;
-    public bool alreadyAttacked;
-    public GameObject projectile;
-    public float spread;
-    public float upwardForce;
+    //Strafing
+    public Vector3 strafeDestination;
+    public bool strafingRight;
+
 
     //States
     public float sightRange, attackRange;
     public bool playerInSight, playerInAttackRange, playerAttackable;
     public PlayerState state;
+    public AttackAction attackAction;
 
+    //AI Properties
+    public MultiAimConstraint headAim;
+    public AIWeaponManager aiWM;
+    public GameObject head;
+
+    public enum AttackAction
+    {
+        DROPSHOT,
+        STRAFE,
+        NONE
+    }
     public enum PlayerState
     {
         PATROLING,
@@ -55,21 +66,30 @@ public class EnemyAI : MonoBehaviour
     */
     private void Awake()
     {
+        attackAction = AttackAction.NONE;
+        head = transform.Find("mixamorig:Hips/mixamorig:Spine/mixamorig:Spine1/mixamorig:Spine2/mixamorig:Neck/mixamorig:Head").gameObject;
+        //headAim = transform.Find("Rig 1/HeadAim_E").GetComponent<MultiAimConstraint>();
         enemyTag = (tag == "Team1") ? "Team2" : "Team1";
         enemies = GameObject.FindGameObjectsWithTag(enemyTag);
         agent = GetComponent<NavMeshAgent>();
-        sensor = GetComponent<AISensor>();
         detector = GetComponentInChildren<ViewconeDetection>();
         patrolPoints = GameObject.Find("Patrol Points").GetComponentsInChildren<Transform>();
         oldPosition = agent.transform.position;
-        spread = 0.1f;
-        upwardForce = 0f;
         currentEnemyTarget = null;
+        aiWM = GetComponentInChildren<AIWeaponManager>();
     }
 
     private void Update()
     {
+        if(attackAction == AttackAction.STRAFE)
+        {
+            transform.LookAt(currentEnemyTarget);
+        }
         if(enemyTag != null)  enemies = GameObject.FindGameObjectsWithTag(enemyTag);
+
+        if(isProne){
+             head.transform.localEulerAngles = new Vector3(-68, head.transform.localEulerAngles.y, head.transform.localEulerAngles.z);//Quaternion.Euler(head.transform.rotation.x, head.transform.rotation.y, -63f);
+        }
         //Remove for testing
         /*
         //Check for sight and attack range  
@@ -92,22 +112,8 @@ public class EnemyAI : MonoBehaviour
         gameObject.tag = team;
         enemyTag = (tag == "Team1") ? "Team2" : "Team1";
         enemies = GameObject.FindGameObjectsWithTag(enemyTag);
-        
-        Material blue = Resources.Load("Materials/Blue", typeof(Material)) as Material;
-        if(!blue)  Debug.LogWarning("Material not found");
-        if(tag == "Team1")  gameObject.GetComponent<Renderer>().material = blue;
-
     }
     
-    private void ResetAttack()
-    {
-        alreadyAttacked = false;
-    }
-
-    public void InvokeResetAttack()
-    {
-        Invoke("ResetAttack", timeBetweenAttacks);
-    }
 
     public void TakeDamage(int damage)
     {
@@ -131,5 +137,23 @@ public class EnemyAI : MonoBehaviour
         Gizmos.DrawWireSphere(transform.position, attackRange);
         Gizmos.color = Color.yellow;
         Gizmos.DrawWireSphere(transform.position, sightRange);
+    }
+
+    public void Prone()
+    {
+        //Either prone or stand up and set animator up accordingly
+        isProne = !isProne;
+        gameObject.GetComponent<Animator>().SetBool("prone", isProne);
+        if(isProne) 
+        {
+           
+            //Debug.Log("Prone = true");
+            //GetComponent<BotManager>().botCollider.direction = 2;
+        }
+        else 
+        {
+            //Debug.Log("Prone = false");
+            //GetComponent<BotManager>().botCollider.direction = 1;
+        }
     }
 }

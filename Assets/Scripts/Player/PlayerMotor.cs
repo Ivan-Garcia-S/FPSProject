@@ -15,12 +15,10 @@ public class PlayerMotor : MonoBehaviour
     private bool isGrounded;
     private float jumpHeight = 1.2f;
     private bool crouching = false;
-    private bool sprinting;
+    private bool prone = false;
+    private bool sprinting = false;
     private float crouchMultiplier = 0.5f;
   
-
-    /////DEBUG/////
-    GameObject head;
 
     // Start is called before the first frame update
     void Start()
@@ -28,14 +26,12 @@ public class PlayerMotor : MonoBehaviour
         controller = GetComponent<CharacterController>();
         //controller = GameObject.Find("Player").GetComponent<CharacterController>();
         animator = GetComponentInChildren<Animator>();
-        sprinting = false;
-       // head = GetComponentInChildren<ParticleSystem>().gameObject;
     }
 
     // Update is called once per frame
     void Update()
     {
-       // Debug.Log("Sphere at " + head.transform.position + ", rotation at " + head.transform.rotation);
+        //Constantly update if character is grounded
         isGrounded = controller.isGrounded;
     }
     //Recieve input for InputManager.cs and apply them to character controller
@@ -65,7 +61,7 @@ public class PlayerMotor : MonoBehaviour
         else if (moveDirection.z > 0)
         {
             //Don't want to stop sprinting for this one
-            StopMovementExceptFor("move", false);
+            StopMovementExceptFor("moveForward", false);
         }
         
         float trueSpeed = speed;
@@ -84,21 +80,42 @@ public class PlayerMotor : MonoBehaviour
 
     public void Crouch()
     {
-        //First stop sprinting if trying to crouch
-        if(sprinting){
-            Sprint();
+        if(isGrounded)
+        {
+            if(prone) Prone();
+            //First stop sprinting if trying to crouch
+            if(sprinting) StopSprint();
+        
+            //Signal to crouch
+            crouching = !crouching;  
+            animator.SetBool("crouched", crouching);
         }
-        //Signal to crouch
-        crouching = !crouching;  
-        animator.SetBool("crouched", crouching);
     }
 
+    public void Prone()
+    {
+        if(isGrounded)
+        {
+            if(sprinting) StopSprint();
+            else if(crouching) Crouch();
+            prone = !prone;
+            animator.SetBool("prone", prone);
+        }
+        
+
+    }
     public void Jump()
     {
         if(isGrounded){
-            if(crouching) Crouch();
-            playerVelocity.y = Mathf.Sqrt(jumpHeight * -3f * gravity);
-            if(sprinting) StopSprint();
+            //If prone, don't jump, crouch
+            if(prone) Crouch();
+            //If crouching or standing, jump
+            else
+            {
+                if(crouching) Crouch();
+                playerVelocity.y = Mathf.Sqrt(jumpHeight * -3f * gravity);
+                if(sprinting) StopSprint();
+            }
         }
     }
 
@@ -117,9 +134,9 @@ public class PlayerMotor : MonoBehaviour
     public void Sprint()
     {
         //If crouching uncrouch
-        if (crouching){
-            Crouch();
-        }
+        if (crouching) Crouch();
+        //If prone, stand
+        else if(prone) Prone();
         //Only change sprint if not ADS and not in air and not idle
         if(!animator.GetBool("aimingDown") && isGrounded && !animator.GetBool("idle"))
         {
@@ -130,7 +147,7 @@ public class PlayerMotor : MonoBehaviour
                 if(gameObject.GetComponentInChildren<WeaponManager2>().reloading) gameObject.GetComponentInChildren<WeaponManager2>().CancelReload();
                 animator.SetBool("strafeLeft", false);
                 animator.SetBool("strafeRight", false);
-                animator.SetBool("move",false);
+                animator.SetBool("moveForward",false);
             }
             
             animator.SetBool("run",sprinting);
@@ -151,7 +168,7 @@ public class PlayerMotor : MonoBehaviour
     {
         if(stopSprint) StopSprint();
         animator.SetBool("strafeRight", false);
-        animator.SetBool("move", false);
+        animator.SetBool("moveForward", false);
         animator.SetBool("strafeLeft", false);
         animator.SetBool("moveBack", false);
         animator.SetBool("idle", false);

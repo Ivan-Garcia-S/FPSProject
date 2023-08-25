@@ -29,7 +29,6 @@ public class PlayerMovement : MonoBehaviour
     void OnCollisionEnter(Collision collision)
     {
         //Check if Player touching ground
-        Debug.Log("Grounded");
         if(collision.transform.tag == "Ground"){
             isGrounded = true;
         }
@@ -37,7 +36,6 @@ public class PlayerMovement : MonoBehaviour
     void OnCollisionExit(Collision collision)
     {
         //Check if Player not touching ground
-        Debug.Log("Not Grounded");
         if(collision.transform.tag == "Ground"){
             isGrounded = false;
         }

@@ -11,6 +11,7 @@ public class AIChase : Node
     private Animator BotAnimator;
     private NavMeshAgent Agent;
     private GameObject DestinationBox;
+    private float chaseSpeed = 7f;
 
     public AIChase(BotManager bot)
     {
@@ -22,8 +23,15 @@ public class AIChase : Node
 
     public override NodeState Evaluate()
     {
+        //Set AI states appropriately
+        AI.attackAction = EnemyAI.AttackAction.NONE;
         AI.state = EnemyAI.PlayerState.CHASING;
+        
+        //Want to Chase standing up
+        if(AI.isProne) AI.Prone();
+        
         AI.walkPointSet = false;
+        AI.agent.speed = chaseSpeed;
         Debug.Log("CHASING");
 
         if(!AI.chasePointSet)
@@ -34,7 +42,7 @@ public class AIChase : Node
         }  
         BotAnimator.SetBool("shoot", false);
         BotAnimator.SetBool("idle", false);
-        BotAnimator.SetBool("move", true);
+        BotAnimator.SetBool("run", true);
 
         state = NodeState.RUNNING;
         return state;

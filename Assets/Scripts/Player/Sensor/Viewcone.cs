@@ -20,11 +20,24 @@ public class Viewcone : MonoBehaviour
 	private MeshCollider ourCollider;
 	private ViewconeDetection spotter;
     public Material material;
+	public GameObject body;
+	public GameObject head;
 
 	private void Start ()
 	{
+		body = GetComponentInParent<EnemyAI>().gameObject;
+		head = body.transform.Find("mixamorig:Hips/mixamorig:Spine/mixamorig:Spine1/mixamorig:Spine2/mixamorig:Neck/mixamorig:Head").gameObject;
 		spotter = GetComponentInParent<ViewconeDetection> ();
         Rebuild();
+	}
+	private void Update()
+	{
+
+		//transform.position = head.transform.position + new Vector3(0.015f,0.07f,22.0699f);
+		transform.localPosition =new Vector3(0.015f,0.07f,22.0699f);
+		//transform.rotation = Quaternion.Euler(180, body.transform.rotation.y,transform.rotation.z);
+		transform.rotation = Quaternion.LookRotation(head.transform.forward * -1, head.transform.up);
+		//transform.position = head.transform.position + head.transform.forward * 1;
 	}
 
 	public void Rebuild ()

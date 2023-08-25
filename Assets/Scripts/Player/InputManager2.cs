@@ -30,11 +30,7 @@ public class InputManager2 : MonoBehaviour
         inputActions.Player.Jump.performed += ctx => motor.Jump();
         inputActions.Player.Sprint.performed += ctx => motor.Sprint();
         inputActions.Player.Crouch.performed += ctx => motor.Crouch();
-        
-        /*inputActions.Player.Shoot.started += ctx => weaponManager.StartShoot();
-        inputActions.Player.Shoot.canceled += ctx => weaponManager.EndShoot();
-        inputActions.Player.Reload.performed += ctx => weaponManager.Reload();
-        */
+        inputActions.Player.Prone.performed += ctx => motor.Prone();
         inputActions.Player.Shoot.started += ctx => wM2.StartShoot();
         inputActions.Player.Shoot.canceled += ctx => wM2.EndShoot();
         inputActions.Player.Reload.performed += ctx => wM2.Reload();

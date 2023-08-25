@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,9 +17,22 @@ public class AICheckPlayerInAttackRange : Node
 
     public override NodeState Evaluate()
     {
-        Collider[] enemiesInRadius = Physics.OverlapSphere(AI.transform.position, AI.attackRange, AI.whatIsPlayer);
-        if(enemiesInRadius.Contains(AI.currentEnemyTarget.GetComponent<Collider>())) state = NodeState.SUCCESS;
-        else state = NodeState.FAILURE;
-        return state;
+        Collider[] enemyCollidersInSight = Physics.OverlapSphere(AI.transform.position, AI.attackRange, AI.whatIsPlayer);
+        foreach(Collider c in enemyCollidersInSight)
+        {
+            try
+            {
+                if(c.GetComponentInParent<CharacterController>().transform == AI.currentEnemyTarget)
+                {
+                    state = NodeState.SUCCESS;
+                    goto EndCheck;
+                }
+            }
+            catch(NullReferenceException){}
+            
+        }
+        EndCheck:
+            state = state == NodeState.SUCCESS ? state : NodeState.FAILURE;
+            return state;
     }
 }

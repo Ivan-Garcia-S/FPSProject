@@ -21,6 +21,7 @@ public class Hitmarker : MonoBehaviour
     {
         markers = gameObject.GetComponentsInChildren<Image>();
         img = gameObject.GetComponent<Image>();
+        img.enabled = true;
         justHit = false;
 
         //gameObject.SetActive(true);
@@ -102,15 +103,15 @@ public class Hitmarker : MonoBehaviour
     }
 
     public void botHit2(){
-       // Debug.Log("In Bot hit 2");
+        Debug.Log("In Bot hit 2");
         if(timeLeft > 0){
             interruptHitmarker = true;
         }
         timeLeft = markerLifespan;
         justHit = true;
         
-        if(img.color == clear) img.color = white;
-        else img.color = clear;
+        if(img.color == Color.clear) img.color = Color.white;
+        else img.color = Color.clear;
 
      //   Debug.Log("color = " + img.color.ToString());
         //xInvoke(nameof(ResetJustHit), markerLifespan);

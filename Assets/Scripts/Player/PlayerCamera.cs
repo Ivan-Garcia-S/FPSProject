@@ -25,21 +25,12 @@ public class PlayerCamera : MonoBehaviour
    //Vector3 lookPoint;
     void Start()
     {
-        ///Old Model///
-        /*motor = GameObject.Find("Player").GetComponentInChildren<PlayerMotor>();
-        head = GameObject.FindWithTag("PlayerHead");
+        player = GameObject.Find("Soldier_M_AR");
+        motor = player.GetComponent<PlayerMotor>();
+        head = player.transform.Find("mixamorig:Hips/mixamorig:Spine/mixamorig:Spine1/mixamorig:Spine2/mixamorig:Neck/mixamorig:Head").gameObject;
         gun = GameObject.FindWithTag("PlayerWeapon");
-        */
-
-        ////New Model////
-         motor = GameObject.Find("Soldier_M").GetComponentInChildren<PlayerMotor>();
-        head = GameObject.Find("mixamorig:Head");
-        gun = GameObject.FindWithTag("PlayerWeapon");
-
         cam = gameObject.GetComponent<Camera>();
         cam.transform.position = defaultCamPosition.position;
-        player = motor.gameObject;
-
     }
 
     // Update is called once per frame

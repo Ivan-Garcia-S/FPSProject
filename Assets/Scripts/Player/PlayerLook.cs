@@ -26,29 +26,26 @@ public class PlayerLook : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
 
-        skinnedMesh = transform.GetComponentInChildren<SkinnedMeshRenderer>();
-        Transform[] bones = skinnedMesh.bones;
+        //JUST DELETED//
+        //skinnedMesh = transform.GetComponentInChildren<SkinnedMeshRenderer>();
+        //Transform[] bones = skinnedMesh.bones;
+        
+        
         //left = Array.FindIndex(bones, b => b.name == "Upper")
         
-        ////Old Model////
-        /*
-        leftArm = GameObject.Find("Bip01_L_UpperArm");
-        rightArm = GameObject.Find("Bip01_R_UpperArm");
-        camSphere = GameObject.Find("CamSphere");
-        head = GameObject.FindWithTag("PlayerHead");
-        */
         
-        ////New Model/////
-        leftArm = GameObject.Find("mixamorig:LeftArm");
+        ////New Model/////DELETED
+        /*leftArm = GameObject.Find("mixamorig:LeftArm");
         rightArm = GameObject.Find("mixamorig:RightArm");
         camSphere = GameObject.Find("CamSphere");
         head = GameObject.Find("mixamorig:Head");
         player = gameObject.GetComponentInParent<Animator>().gameObject;
+        */
     }
 
     void Start()
     {
-        Debug.Log("offset is " + (transform.position - cam.transform.position));
+        //Debug.Log("offset is " + (transform.position - cam.transform.position));
         //(.1, -1.7, -.1)
     }
     public void ProcessLook(Vector2 inputVector)
@@ -64,16 +61,9 @@ public class PlayerLook : MonoBehaviour
 
         //Apply to camera transform
         cam.transform.localRotation = Quaternion.Euler(xRotation, cam.transform.eulerAngles.y, cam.transform.eulerAngles.z);
-        //leftArm.transform.localRotation = Quaternion.Euler(xRotation, 0, 0);
-        //rightArm.transform.localRotation = Quaternion.Euler(xRotation, 0, 0);
 
         //Rotate player left and right
         transform.Rotate(Vector3.up * mouseX * Time.deltaTime * xSensitivity);
 
-        //Move Camera Sphere if mouse Y moving
-        if(inputVector.y != 0){
-            //camSphere.transform.position = head.transform.position;
-            //camSphere.transform.rotation = Quaternion.Euler(head.transform.eulerAngles.x, head.transform.eulerAngles.y, camSphere.transform.eulerAngles.z);
-        }
     }
 }

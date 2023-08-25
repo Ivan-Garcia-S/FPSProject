@@ -17,7 +17,7 @@ public class Projectile2 : MonoBehaviour
         if(hitmark == null){
             Debug.Log("Hitmark null");
         }
-        playerState = GameObject.Find("Soldier_M").GetComponentInChildren<PlayerState>();
+        playerState = GameObject.Find("Soldier_M_AR").GetComponentInChildren<PlayerState>();
         gameObject.transform.parent = null;
         
     }
@@ -32,9 +32,14 @@ public class Projectile2 : MonoBehaviour
     {
         //Check if bulet hit enemy soldier
         if(collision.transform.tag == playerState.enemyTag){
+            //Debug.Log("Enemy soldier hit");
             hitmark.GetComponent<Hitmarker>().botHit2();
             collision.transform.GetComponentInParent<BotManager>().TakeDamage(damage);
         }
+        /*else{
+            Debug.Log("Tag of obj hit = " + collision.transform.tag);
+        }
+        */
         Destroy(gameObject);
     }
 }

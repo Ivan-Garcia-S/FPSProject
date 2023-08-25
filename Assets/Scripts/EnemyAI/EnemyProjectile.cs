@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -8,10 +9,11 @@ public class EnemyProjectile : MonoBehaviour
     public float damage = 20f;
     public float lifeSpan = 3f;
     public string enemyTag;
+    public string friendlyTag;
 
     private void OnEnable() 
     { 
-        gameObject.transform.parent = null; 
+        transform.parent = null; 
         bullet = gameObject;
     }
 
@@ -28,21 +30,31 @@ public class EnemyProjectile : MonoBehaviour
     }
 
     void OnCollisionStay(Collision collision) {
-        if(collision.transform.tag == enemyTag)   
+
+        try
         {
-            if(collision.transform.GetComponent<BotManager>() != null)
-                collision.transform.GetComponent<BotManager>().TakeDamage(damage);  //If bullet hits enemy bot do damage
-            else if(collision.transform.GetComponent<PlayerState>() != null)
-                collision.transform.GetComponent<PlayerState>().TakeDamage(damage); // If bullet hits enemy playyer do damage
-            else  Debug.LogWarning("Enemy object is unidentifiable");
-        }
+            Transform enemyHit = collision.transform.GetComponentInParent<CharacterController>().transform;
             
-        if(collision.transform.tag != tag) Destroy(gameObject);  
+            if(enemyHit.tag == enemyTag)   
+            {
+                if(enemyHit.GetComponent<BotManager>() != null)
+                    enemyHit.GetComponent<BotManager>().TakeDamage(damage);  //If bullet hits enemy bot do damage
+                else if(enemyHit.GetComponent<PlayerState>() != null)
+                    enemyHit.GetComponent<PlayerState>().TakeDamage(damage); // If bullet hits enemy player do damage
+                else  Debug.LogWarning("Enemy object is unidentifiable");
+            }
+        
+        }
+        catch(NullReferenceException){}
+        //Destroy bullet unless it goes through a teammate with the same team tag
+        
+        if(collision.transform.tag != tag && collision.transform.tag != friendlyTag) Destroy(gameObject);  
+        
     }
 
     public void SetBulletInfo(string myTag)
     {
-        tag = myTag;
+        friendlyTag = myTag;
         enemyTag = (myTag == "Team1") ? "Team2" : "Team1";
     }
 }

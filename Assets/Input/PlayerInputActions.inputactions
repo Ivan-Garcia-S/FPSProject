@@ -85,6 +85,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "Prone",
+                    "type": "Button",
+                    "id": "589be654-ee7b-4761-adb7-bc40fa7ed9e9",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -301,7 +310,7 @@
                     "name": "",
                     "id": "a5e56693-e6cc-48a4-96c0-2d5c1cc3c7a8",
                     "path": "<Keyboard>/leftCtrl",
-                    "interactions": "",
+                    "interactions": "Tap",
                     "processors": "",
                     "groups": "",
                     "action": "Crouch",
@@ -312,7 +321,7 @@
                     "name": "",
                     "id": "563fbd7d-ff6e-4b43-9a79-0088b1ceb8a7",
                     "path": "<Gamepad>/buttonEast",
-                    "interactions": "",
+                    "interactions": "Tap",
                     "processors": "",
                     "groups": "",
                     "action": "Crouch",
@@ -426,6 +435,28 @@
                     "processors": "",
                     "groups": "",
                     "action": "ADSRelease",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "35b0e147-e5a9-46c3-9d1c-297ac5cb3129",
+                    "path": "<Keyboard>/leftCtrl",
+                    "interactions": "Hold(duration=0.28)",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Prone",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "cad7ef28-624b-437e-8f0f-ffe4a769ea2f",
+                    "path": "<Gamepad>/buttonEast",
+                    "interactions": "Hold(duration=0.28)",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Prone",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

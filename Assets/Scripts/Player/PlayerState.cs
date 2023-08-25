@@ -75,7 +75,7 @@ public class PlayerState : MonoBehaviour
                 currentHealth += Time.deltaTime * healthRegenPerSecond;
             }
             else{
-                Debug.Log("No health regen");
+                //Debug.Log("No health regen");
             }
         }
         
