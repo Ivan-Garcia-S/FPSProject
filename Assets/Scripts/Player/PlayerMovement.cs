@@ -5,11 +5,11 @@ using UnityEngine.InputSystem;
 
 public class PlayerMovement : MonoBehaviour
 {
-   // private PlayerInput input;
-    //private PlayerInputActions inputActions;
+   
     private Vector2 moveVector = Vector2.zero;
     private Rigidbody playerRB;
-    //private CharacterController controller;
+
+    [Header("Player Info")]
     public float speed = 4f;
     public bool isGrounded;
     public float maxForce = 5f;
@@ -101,18 +101,9 @@ public class PlayerMovement : MonoBehaviour
         crouchTimer = 0;
         lerpCrouch = true;
     }
-    /*private void FixedUpdate() {
-        Debug.Log(moveVector);
-        Debug.Log("Grounded = " + isGrounded);
-        
-        Vector2 inputVector = inputActions.Player.Movement.ReadValue<Vector2>();
-        playerRB.AddForce(new Vector3(inputVector.x, 0, inputVector.y) * speed,ForceMode.Force);
-    }
-    */
 
     public void onJump(InputAction.CallbackContext context)
     {
-        //Debug.Log(context);
         if (context.performed && isGrounded){
             Vector3 jumpVector = Vector3.up * jumpForce;
             playerRB.AddForce(jumpVector, ForceMode.VelocityChange);
@@ -132,29 +123,4 @@ public class PlayerMovement : MonoBehaviour
             speed = 4;
         }
     }
-
-     
-    /*private void OnEnable() {
-        input.Enable();
-        input.Player.Movement.performed += OnMovementPerformed;
-        input.Player.Movement.canceled += OnMovementCancelled;
-    }
-
-    private void OnDisable() {
-        input.Disable();
-        input.Player.Movement.performed -= OnMovementPerformed;
-        input.Player.Movement.canceled -= OnMovementCancelled;
-    }
-
-    
-    private void OnMovementPerformed(InputAction.CallbackContext context){
-        moveVector = context.ReadValue<Vector2>();
-    }
-
-    private void OnMovementCancelled(InputAction.CallbackContext context){
-        moveVector = Vector2.zero;
-    }
-    */
-   
-
 }

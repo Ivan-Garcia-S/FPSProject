@@ -15,8 +15,10 @@ public class AICheckPlayerInAttackRange : Node
         AI = bot.AI;
     }
 
+    //Check if enemy is within the attack range radius
     public override NodeState Evaluate()
     {
+        
         Collider[] enemyCollidersInSight = Physics.OverlapSphere(AI.transform.position, AI.attackRange, AI.whatIsPlayer);
         foreach(Collider c in enemyCollidersInSight)
         {

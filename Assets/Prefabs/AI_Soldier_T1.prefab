@@ -1,0 +1,183 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1001 &2096859065489867609
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 847448436882809472, guid: aadf5aee94059441c9147ed1d3977a0f, type: 3}
+      propertyPath: m_TagString
+      value: Team1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1143552929519212380, guid: aadf5aee94059441c9147ed1d3977a0f, type: 3}
+      propertyPath: m_TagString
+      value: Team1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1339501438071457850, guid: aadf5aee94059441c9147ed1d3977a0f, type: 3}
+      propertyPath: m_TagString
+      value: Team1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1391141357871382551, guid: aadf5aee94059441c9147ed1d3977a0f, type: 3}
+      propertyPath: m_TagString
+      value: Team1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3136383094370383354, guid: aadf5aee94059441c9147ed1d3977a0f, type: 3}
+      propertyPath: m_TagString
+      value: Team1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3218584339933507244, guid: aadf5aee94059441c9147ed1d3977a0f, type: 3}
+      propertyPath: m_TagString
+      value: Team1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3878359421860118342, guid: aadf5aee94059441c9147ed1d3977a0f, type: 3}
+      propertyPath: m_Name
+      value: AI_Soldier_T1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3878359421860118342, guid: aadf5aee94059441c9147ed1d3977a0f, type: 3}
+      propertyPath: m_TagString
+      value: Team1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4112871166690303374, guid: aadf5aee94059441c9147ed1d3977a0f, type: 3}
+      propertyPath: m_Data.m_ConstrainedObject
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 4112871166690303374, guid: aadf5aee94059441c9147ed1d3977a0f, type: 3}
+      propertyPath: m_Data.m_SourceObjects.m_Item0.transform
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 4112871166818417412, guid: aadf5aee94059441c9147ed1d3977a0f, type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 4112871166818417418, guid: aadf5aee94059441c9147ed1d3977a0f, type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 4112871167288201506, guid: aadf5aee94059441c9147ed1d3977a0f, type: 3}
+      propertyPath: m_Data.m_Mid
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 4112871167288201506, guid: aadf5aee94059441c9147ed1d3977a0f, type: 3}
+      propertyPath: m_Data.m_Tip
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 4112871167288201506, guid: aadf5aee94059441c9147ed1d3977a0f, type: 3}
+      propertyPath: m_Data.m_Hint
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 4112871167288201506, guid: aadf5aee94059441c9147ed1d3977a0f, type: 3}
+      propertyPath: m_Data.m_Root
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 4112871167288201506, guid: aadf5aee94059441c9147ed1d3977a0f, type: 3}
+      propertyPath: m_Data.m_Target
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 4112871167402374664, guid: aadf5aee94059441c9147ed1d3977a0f, type: 3}
+      propertyPath: m_Data.m_OverrideSource
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 4112871167402374665, guid: aadf5aee94059441c9147ed1d3977a0f, type: 3}
+      propertyPath: m_Data.m_SourceObjects.m_Item0.transform
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 4112871167883018007, guid: aadf5aee94059441c9147ed1d3977a0f, type: 3}
+      propertyPath: m_Data.m_SourceObjects.m_Item0.transform
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 4112871167956933797, guid: aadf5aee94059441c9147ed1d3977a0f, type: 3}
+      propertyPath: alertIcon
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 4112871167956933802, guid: aadf5aee94059441c9147ed1d3977a0f, type: 3}
+      propertyPath: enemyTag
+      value: Team2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4112871167956933803, guid: aadf5aee94059441c9147ed1d3977a0f, type: 3}
+      propertyPath: GameManager
+      value: 
+      objectReference: {fileID: 2600860919504453131, guid: 84381c4fbcd864a9f847d37c5a476eec, type: 3}
+    - target: {fileID: 4112871168024708174, guid: aadf5aee94059441c9147ed1d3977a0f, type: 3}
+      propertyPath: m_Data.m_ConstrainedObject
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 4112871168024708174, guid: aadf5aee94059441c9147ed1d3977a0f, type: 3}
+      propertyPath: m_Data.m_SourceObjects.m_Item0.transform
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 4112871168188815831, guid: aadf5aee94059441c9147ed1d3977a0f, type: 3}
+      propertyPath: m_Data.m_Target
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 4255049469576773713, guid: aadf5aee94059441c9147ed1d3977a0f, type: 3}
+      propertyPath: m_TagString
+      value: Team1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4510746401846765052, guid: aadf5aee94059441c9147ed1d3977a0f, type: 3}
+      propertyPath: m_RootOrder
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4510746401846765052, guid: aadf5aee94059441c9147ed1d3977a0f, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -50.78
+      objectReference: {fileID: 0}
+    - target: {fileID: 4510746401846765052, guid: aadf5aee94059441c9147ed1d3977a0f, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.015
+      objectReference: {fileID: 0}
+    - target: {fileID: 4510746401846765052, guid: aadf5aee94059441c9147ed1d3977a0f, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -91.69
+      objectReference: {fileID: 0}
+    - target: {fileID: 4510746401846765052, guid: aadf5aee94059441c9147ed1d3977a0f, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4510746401846765052, guid: aadf5aee94059441c9147ed1d3977a0f, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4510746401846765052, guid: aadf5aee94059441c9147ed1d3977a0f, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4510746401846765052, guid: aadf5aee94059441c9147ed1d3977a0f, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4510746401846765052, guid: aadf5aee94059441c9147ed1d3977a0f, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4510746401846765052, guid: aadf5aee94059441c9147ed1d3977a0f, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4510746401846765052, guid: aadf5aee94059441c9147ed1d3977a0f, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4820213396998569448, guid: aadf5aee94059441c9147ed1d3977a0f, type: 3}
+      propertyPath: m_TagString
+      value: Team1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4849429950399723412, guid: aadf5aee94059441c9147ed1d3977a0f, type: 3}
+      propertyPath: m_TagString
+      value: Team1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6797201864917025139, guid: aadf5aee94059441c9147ed1d3977a0f, type: 3}
+      propertyPath: m_TagString
+      value: Team1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7798295330885269148, guid: aadf5aee94059441c9147ed1d3977a0f, type: 3}
+      propertyPath: m_TagString
+      value: Team1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8848720633803026271, guid: aadf5aee94059441c9147ed1d3977a0f, type: 3}
+      propertyPath: m_TagString
+      value: Team1
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: aadf5aee94059441c9147ed1d3977a0f, type: 3}

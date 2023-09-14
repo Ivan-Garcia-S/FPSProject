@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 8128417570733422710}
   - component: {fileID: 6044943847130338398}
   - component: {fileID: 6391738462974910316}
-  - component: {fileID: -7064081109328560142}
+  - component: {fileID: 2667160049480699360}
   m_Layer: 0
   m_Name: Bullet
   m_TagString: Bullet
@@ -222,7 +222,7 @@ TrailRenderer:
   m_MinVertexDistance: 0.1
   m_Autodestruct: 0
   m_Emitting: 1
---- !u!114 &-7064081109328560142
+--- !u!114 &2667160049480699360
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -235,6 +235,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   bullet: {fileID: 5991786458737519093}
-  hitmark: {fileID: 7484803147181135732, guid: af111ad436cbf47d4989b62e604f2fa4, type: 3}
-  damage: 20
-  lifeSpan: 999
+  hitmarker: {fileID: 7141705238052361821, guid: 154a0eb508b8e4d0ab8bc0fafa319cdc, type: 3}
+  damage: 26
+  lifeSpan: 3

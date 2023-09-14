@@ -4,10 +4,19 @@ using UnityEngine.Animations.Rigging;
 
 public class EnemyAI : MonoBehaviour
 {
+    [Header("References")]
+    //AI Properties
+    public MultiAimConstraint headAim;
+    public AIWeaponManager aiWM;
+    public GameObject head;
+    public GameManager GameManager;
+
+    [Header("AI Detection")]
     //AI detection variables
     public NavMeshAgent agent;
     public ViewconeDetection detector;
 
+    [Header("Enemy Info")]
     //Enemy transforms
     public GameObject[] enemies;
     public Transform currentEnemyTarget;
@@ -15,36 +24,40 @@ public class EnemyAI : MonoBehaviour
     public LayerMask whatIsGround, whatIsPlayer;
     public Transform walkPointMarker;
 
+    [Header("AI State")]
     //State variables
     public float health;
     public string enemyTag;
     public bool isProne;
-
-    //Patroling
-    public Vector3 walkPoint;
-    public bool walkPointSet;
-    public float walkPointRange;
-    private Vector3 oldPosition;
-    public Transform[] patrolPoints;
-
-    //Chasing
-    public bool chasePointSet;
-
-    //Strafing
-    public Vector3 strafeDestination;
-    public bool strafingRight;
-
-
-    //States
     public float sightRange, attackRange;
+    [HideInInspector]
     public bool playerInSight, playerInAttackRange, playerAttackable;
     public PlayerState state;
     public AttackAction attackAction;
 
-    //AI Properties
-    public MultiAimConstraint headAim;
-    public AIWeaponManager aiWM;
-    public GameObject head;
+    [Header("Patroling")]
+    //Patroling
+    public Vector3 walkPoint;
+    [HideInInspector]
+    public bool walkPointSet;
+    //public float walkPointRange;
+    private Vector3 oldPosition;
+    public Transform[] patrolPoints;
+
+    [Header("Chasing")]
+    //Chasing
+    public bool chasePointSet;
+
+    [Header("Strafing")]
+    //Strafing
+    public Vector3 strafeDestination;
+
+    [HideInInspector]
+    public bool strafingRight;
+
+    [Header("Hiding")]
+    //Hiding
+    public bool canInvokeStopHiding;
 
     public enum AttackAction
     {
@@ -56,7 +69,8 @@ public class EnemyAI : MonoBehaviour
     {
         PATROLING,
         CHASING,
-        ATTACKING
+        ATTACKING,
+        HIDING
     }
 
     /*public EnemyAI(string teamTag = "Team1")
@@ -67,10 +81,10 @@ public class EnemyAI : MonoBehaviour
     private void Awake()
     {
         attackAction = AttackAction.NONE;
+        canInvokeStopHiding = true;
         head = transform.Find("mixamorig:Hips/mixamorig:Spine/mixamorig:Spine1/mixamorig:Spine2/mixamorig:Neck/mixamorig:Head").gameObject;
         //headAim = transform.Find("Rig 1/HeadAim_E").GetComponent<MultiAimConstraint>();
-        enemyTag = (tag == "Team1") ? "Team2" : "Team1";
-        enemies = GameObject.FindGameObjectsWithTag(enemyTag);
+        //enemies = GameObject.FindGameObjectsWithTag(enemyTag);
         agent = GetComponent<NavMeshAgent>();
         detector = GetComponentInChildren<ViewconeDetection>();
         patrolPoints = GameObject.Find("Patrol Points").GetComponentsInChildren<Transform>();
@@ -81,36 +95,22 @@ public class EnemyAI : MonoBehaviour
 
     private void Update()
     {
+        //Always look at target when strafing
         if(attackAction == AttackAction.STRAFE)
         {
             transform.LookAt(currentEnemyTarget);
         }
-        if(enemyTag != null)  enemies = GameObject.FindGameObjectsWithTag(enemyTag);
+        //Get enemies currently on map (NOT NECCESARY RN)
+        //if(enemyTag != null)  enemies = GameObject.FindGameObjectsWithTag(enemyTag);
 
+        //Adjust for when prone
         if(isProne){
              head.transform.localEulerAngles = new Vector3(-68, head.transform.localEulerAngles.y, head.transform.localEulerAngles.z);//Quaternion.Euler(head.transform.rotation.x, head.transform.rotation.y, -63f);
         }
-        //Remove for testing
-        /*
-        //Check for sight and attack range  
-        playerInSight = detector.alertIcon.activeInHierarchy;
-        playerInAttackRange = Physics.CheckSphere(transform.position, attackRange, whatIsPlayer);
-
-        if (!playerInSight) Patroling();
-        else if (playerInSight && !playerInAttackRange) ChasePlayer();
-        else if (playerInSight && playerInAttackRange) AttackPlayer();
-        
-        
-
-        if(walkPointSet) walkPointMarker.position = walkPoint;
-        else walkPointMarker.position = new Vector3(-17f,23f,-9f);
-        */
     }
 
-    public void TeamName(string team)
+    public void GetEnemies(string enemyTag)
     {
-        gameObject.tag = team;
-        enemyTag = (tag == "Team1") ? "Team2" : "Team1";
         enemies = GameObject.FindGameObjectsWithTag(enemyTag);
     }
     
@@ -141,19 +141,24 @@ public class EnemyAI : MonoBehaviour
 
     public void Prone()
     {
-        //Either prone or stand up and set animator up accordingly
+        //Toggle prone and set animator up accordingly
         isProne = !isProne;
         gameObject.GetComponent<Animator>().SetBool("prone", isProne);
-        if(isProne) 
-        {
-           
-            //Debug.Log("Prone = true");
-            //GetComponent<BotManager>().botCollider.direction = 2;
-        }
-        else 
-        {
-            //Debug.Log("Prone = false");
-            //GetComponent<BotManager>().botCollider.direction = 1;
-        }
+    }
+
+    public void GoProne()
+    {
+        //Go prone and set up animator accordingly
+        isProne = true;
+        gameObject.GetComponent<Animator>().SetBool("prone", true);
+    }
+    public void StopHiding()
+    {
+        //Debug.Log("StopHiding called");
+        //First stand back up
+        Prone();
+        //Search for enemies again
+        state = EnemyAI.PlayerState.PATROLING;
+        canInvokeStopHiding = true;
     }
 }

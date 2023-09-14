@@ -14,13 +14,7 @@ public class GameObjectMove : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        xMove = transform.position.x;
-        yMove = transform.position.y;
-        zMove = transform.position.z;
-
-        xRotation = transform.rotation.x;
-        yRotation = transform.rotation.y;
-        zRotation = transform.rotation.z;
+        Invoke("SetVariables",1f);
     }
 
     // Update is called once per frame
@@ -28,5 +22,16 @@ public class GameObjectMove : MonoBehaviour
     {
         transform.position = new Vector3(xMove,yMove,zMove);
         transform.rotation = Quaternion.Euler(xRotation, yRotation, zRotation);
+    }
+
+    private void SetVariables()
+    {
+        xMove = transform.position.x;
+        yMove = transform.position.y;
+        zMove = transform.position.z;
+
+        xRotation = transform.rotation.x;
+        yRotation = transform.rotation.y;
+        zRotation = transform.rotation.z;
     }
 }

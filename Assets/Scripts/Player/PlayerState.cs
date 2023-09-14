@@ -5,68 +5,55 @@ using UnityEngine.UI;
 
 public class PlayerState : MonoBehaviour
 {
+    public GameManager Game;
     
+    [Header("Player Info")]
     private float maxHealth = 100f;
     public float currentHealth;
+    public string myTag = "Team1";
+    public string enemyTag = "Team2";
     private float criticalState;
     private float baseHealthRegenPerSecond = 5f;
     private float healthRegenPerSecond;
     private float healthRegenAcceleration = 15f;
 
+    [Header("Blood UI")]
     public Image overlay;
     public Sprite overlaySprite;
-    public float duration;
-    public float criticalStateDuration = 3.25f;
-    public float fadeSpeed;
-    private float durationTimer;
-    public string myTag = "Team1";
-    public string enemyTag;
 
-   
-    // Start is called before the first frame update
+    private float duration;
+    private float criticalStateDuration = 3.25f;
+    private float fadeSpeed;
+    private float durationTimer;
+    
     void Awake()
     {
+        Game = GameObject.FindWithTag("GameManager").GetComponent<GameManager>();
         currentHealth = maxHealth;
-        criticalState = 0.2f * maxHealth;
+        criticalState = 0.26f * maxHealth;
         overlay.color = new Color(overlay.color.r, overlay.color.g, overlay.color.b, 0);
         healthRegenPerSecond = baseHealthRegenPerSecond;
         gameObject.tag = myTag;
         GameObject damOverlay = GameObject.Find("DamageOverlay");
-        //Debug.Log(damOverlay + " = damOverlay");
         overlaySprite = damOverlay.GetComponent<Sprite>();
-        enemyTag = "Team2";
     }
 
-    // Update is called once per frame
     void Update()
     {
         //If character has no health remaining
-        if(currentHealth < 0){
+        if(currentHealth < 0 && currentHealth > -26){
             Debug.Log("You died");
+            Game.UpdateScore(myTag);
             //currentHealth = maxHealth;
         }
 
+        //Health regen
         if(currentHealth > criticalState){
             healthRegenPerSecond += Time.deltaTime * healthRegenAcceleration;
             overlay.color = new Color(overlay.color.r, overlay.color.g, overlay.color.b, 1 - currentHealth / maxHealth);
             currentHealth = Mathf.Min(100, currentHealth + healthRegenPerSecond * Time.deltaTime);
         }
         
-        //Old method
-        /*else if(enteredCriticalState){
-            overlay.color = new Color(overlay.color.r, overlay.color.g, overlay.color.b, 1);
-            enteredCriticalState = false;
-            durationTimer += Time.deltaTime;
-            overlay.color = Color.Lerp(overlay.color, new Color(overlay.color.r, overlay.color.g, overlay.color.b, 0.5f), Mathf.PingPong(Time.time * fadeSpeed, 1));
-        }
-        else{
-            durationTimer += Time.deltaTime;
-            overlay.color = Color.Lerp(overlay.color, new Color(overlay.color.r, overlay.color.g, overlay.color.b, 0.5f), Mathf.PingPong(Time.time * fadeSpeed, 1));
-            if(durationTimer > criticalStateDuration){
-                currentHealth += Time.deltaTime * healthRegenPerSecond;
-            }
-        }
-        */
         else{
             durationTimer += Time.deltaTime;
             overlay.color = Color.Lerp(new Color(overlay.color.r, overlay.color.g, overlay.color.b, 1f), new Color(overlay.color.r, overlay.color.g, overlay.color.b, 0.2f), Mathf.PingPong(Time.time * fadeSpeed, 1));

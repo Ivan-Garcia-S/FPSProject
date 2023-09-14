@@ -18,12 +18,12 @@ public class AIGoProne : Node
         //Only possibly prone if not already doing an Attack Action
         if(AI.attackAction == EnemyAI.AttackAction.NONE)
         {
+            //Dropshot only a a percent of the time when attacking
             if (Random.Range(0f, 1f) <= proneRate)
             {
                 AI.isProne = true;
                 AI.attackAction = EnemyAI.AttackAction.DROPSHOT;
                 animator.SetBool("prone", true);
-                
             }
         
         }

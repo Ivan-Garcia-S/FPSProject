@@ -23,12 +23,6 @@ public class EnemyProjectile : MonoBehaviour
         if(lifeSpan <= 0) Destroy(gameObject);
     }
 
-    void OnCollisionEnter(Collision collision)
-    {
-        
-        //if(collision.transform.tag != "Bot") Destroy(gameObject);
-    }
-
     void OnCollisionStay(Collision collision) {
 
         try
@@ -49,7 +43,6 @@ public class EnemyProjectile : MonoBehaviour
         //Destroy bullet unless it goes through a teammate with the same team tag
         
         if(collision.transform.tag != tag && collision.transform.tag != friendlyTag) Destroy(gameObject);  
-        
     }
 
     public void SetBulletInfo(string myTag)

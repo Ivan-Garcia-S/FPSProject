@@ -33,16 +33,20 @@ public class PlayerCamera : MonoBehaviour
         cam.transform.position = defaultCamPosition.position;
     }
 
-    // Update is called once per frame
+    // Update is called once per frwame
+    //Changed from FixedUpdate to Update
     void FixedUpdate()
     {
         //Make camera look point in center of player view
         lookRay = cam.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));  
         lookPoint.position = lookRay.GetPoint(10);
         
-       
+        Vector3 addZ = Vector3.zero;
+        if(motor.IsSprinting()){
+            addZ = head.transform.forward * .18f;
+        }
         //Camera settings for when placed by head
-        transform.position = head.transform.position + head.transform.forward * forwardMultiplierHead + head.transform.up * upMultiplierHead;
+        transform.position = head.transform.position + head.transform.forward * forwardMultiplierHead + head.transform.up * upMultiplierHead + addZ;
         transform.rotation = Quaternion.Euler(transform.eulerAngles.x, player.transform.eulerAngles.y, transform.eulerAngles.z);
        
 

@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class BotManager : MonoBehaviour
 {
+    [Header("References")]
     public GameObject bot;
     public EnemyAI AI;
     public CapsuleCollider botCollider;
@@ -11,11 +12,29 @@ public class BotManager : MonoBehaviour
     public GameObject destinationPointBox;
     public GameObject patrolPointObj;
     public Transform[] patrolPoints;
-    public float health = 100f;
+    public GameObject navDebugger;
+    public GameManager Game;
+    
+    [Header("AI State")]
+    public float currentHealth = 100f;
+    public float maxHealth = 100f;
+    [HideInInspector]
+    public float criticalState;
+    private float baseHealthRegenPerSecond = 5f;
+    private float healthRegenPerSecond;
+    private float healthRegenAcceleration = 15f;
+    private float durationTimer;
+    private float criticalStateDuration = 3.25f;
+    private float criticalStatePercent = 0.26f;
     
     // Start is called before the first frame update
     void Awake()
     {
+        Game = GameObject.FindWithTag("GameManager").GetComponent<GameManager>();
+        destinationPointBox = transform.Find("Destination Point").gameObject;
+        navDebugger = GetComponentInChildren<LineRenderer>().gameObject;
+        healthRegenPerSecond = baseHealthRegenPerSecond;
+        criticalState = criticalStatePercent * maxHealth;
         botCollider = GetComponent<CapsuleCollider>();
         patrolPoints = new Transform[6];
         AI = GetComponent<EnemyAI>();
@@ -23,20 +42,47 @@ public class BotManager : MonoBehaviour
         for(int i = 0; i < patrolPoints.Length; i++){
             patrolPoints[i] = patrolPointObj.transform.GetChild(i);
         }
+
+        //TESTING
+        navDebugger.SetActive(false);
     }
 
     // Update is called once per frame
     void Update()
     {
+        //Health regen
+        if(currentHealth > criticalState){
+            healthRegenPerSecond += Time.deltaTime * healthRegenAcceleration;
+            currentHealth = Mathf.Min(100, currentHealth + healthRegenPerSecond * Time.deltaTime);
+        }
         
-    }
-    public void TakeDamage(float damage){
-        health -= damage;
-        if(health <=0 ){
-            Destroy(bot);
+        else{
+            durationTimer += Time.deltaTime;
+            if(durationTimer > criticalStateDuration){
+                healthRegenPerSecond += Time.deltaTime * healthRegenAcceleration;
+                currentHealth = Mathf.Min(100, currentHealth + Time.deltaTime * healthRegenPerSecond);
+            }
         }
     }
+    public void TakeDamage(float damage){
+        //Take damage
+        currentHealth -= damage;
 
+        //Update score if bot killed
+        if(currentHealth <=0 ){
+            navDebugger.SetActive(false);
+            string deadSoldierTag = gameObject.tag;
+            Destroy(bot);
+            Game.UpdateScore(deadSoldierTag);
+        }
+
+        //Reset health regen growth
+        healthRegenPerSecond = baseHealthRegenPerSecond;
+
+        //Reset timer for health regen
+        durationTimer = 0;
+    }
+    //Correctly set state for animator to transition to
     public void SetAnimatorState(string stateToSet, bool changeProne=false, bool changeCrouch=false, bool changeSprint=false)
     {
         switch(stateToSet){
@@ -61,7 +107,7 @@ public class BotManager : MonoBehaviour
                 break;
             case "shoot":
                 animator.SetBool("run", false);
-                animator.SetTrigger("stopReload");
+                animator.SetBool("reload",false);
                 animator.SetBool("shoot",true);
                 break;
             case "reload":
@@ -71,7 +117,7 @@ public class BotManager : MonoBehaviour
             case "sprint":
                 StopMovementExceptFor("moveForward");
                 animator.SetBool("shoot", false);
-                animator.SetTrigger("stopReload");
+                animator.SetBool("reload",false);
                 animator.SetBool("run", true);
                 break;
             default:
@@ -85,7 +131,7 @@ public class BotManager : MonoBehaviour
         if(changeSprint) animator.SetBool("run", !animator.GetBool("run")); 
            
     }
-
+    //Set animator movement state
     public void StopMovementExceptFor(string exception)
     {
         animator.SetBool("strafeRight", false);
@@ -95,4 +141,6 @@ public class BotManager : MonoBehaviour
         animator.SetBool("idle", false);
         animator.SetBool(exception, true);
     }
+
+    
 }

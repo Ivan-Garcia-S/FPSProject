@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class Hitmarker : MonoBehaviour
 {
-    //public GameObject hitmarker;
+    //[Header("")]
     private Image[] markers;
     public Image img;
     public Color white = new Color32(255,255,255,255);

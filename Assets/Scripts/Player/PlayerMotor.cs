@@ -6,29 +6,28 @@ using UnityEngine.InputSystem;
 public class PlayerMotor : MonoBehaviour
 {
 
+    [Header("References")]
     private CharacterController controller;
     //private CharacterController controller;
-    [SerializeField ] private Animator animator;
+    [SerializeField] private Animator animator;
+
+    [Header("Player Info")]
     private Vector3 playerVelocity;
     [SerializeField] private float speed = 6f;
     [SerializeField] private float gravity = -9.8f;
     private bool isGrounded;
     private float jumpHeight = 1.2f;
-    private bool crouching = false;
-    private bool prone = false;
-    private bool sprinting = false;
+    private bool isCrouching = false;
+    private bool isProne = false;
+    bool isSprinting = false;
     private float crouchMultiplier = 0.5f;
   
-
-    // Start is called before the first frame update
     void Start()
     {
         controller = GetComponent<CharacterController>();
-        //controller = GameObject.Find("Player").GetComponent<CharacterController>();
         animator = GetComponentInChildren<Animator>();
     }
 
-    // Update is called once per frame
     void Update()
     {
         //Constantly update if character is grounded
@@ -65,7 +64,7 @@ public class PlayerMotor : MonoBehaviour
         }
         
         float trueSpeed = speed;
-        if(crouching){
+        if(isCrouching){
             trueSpeed *= crouchMultiplier;
         }
         controller.Move(transform.TransformDirection(moveDirection) * trueSpeed * Time.deltaTime);
@@ -80,41 +79,42 @@ public class PlayerMotor : MonoBehaviour
 
     public void Crouch()
     {
-        if(isGrounded)
+        if(isGrounded || isProne)
         {
-            if(prone) Prone();
+            if(isProne) Prone();
             //First stop sprinting if trying to crouch
-            if(sprinting) StopSprint();
+            if(isSprinting) StopSprint();
         
             //Signal to crouch
-            crouching = !crouching;  
-            animator.SetBool("crouched", crouching);
+            isCrouching = !isCrouching;  
+            animator.SetBool("crouched", isCrouching);
         }
     }
 
     public void Prone()
     {
-        if(isGrounded)
+        //Toggle prone
+        if(isGrounded || isProne)
         {
-            if(sprinting) StopSprint();
-            else if(crouching) Crouch();
-            prone = !prone;
-            animator.SetBool("prone", prone);
+            if(isSprinting) StopSprint();
+            else if(isCrouching) Crouch();
+            isProne = !isProne;
+            animator.SetBool("prone", isProne);
         }
         
 
     }
     public void Jump()
     {
-        if(isGrounded){
+        if(isGrounded || isProne){
             //If prone, don't jump, crouch
-            if(prone) Crouch();
+            if(isProne) Crouch();
             //If crouching or standing, jump
             else
             {
-                if(crouching) Crouch();
+                if(isCrouching) Crouch();
                 playerVelocity.y = Mathf.Sqrt(jumpHeight * -3f * gravity);
-                if(sprinting) StopSprint();
+                if(isSprinting) StopSprint();
             }
         }
     }
@@ -134,33 +134,33 @@ public class PlayerMotor : MonoBehaviour
     public void Sprint()
     {
         //If crouching uncrouch
-        if (crouching) Crouch();
+        if (isCrouching) Crouch();
         //If prone, stand
-        else if(prone) Prone();
+        else if(isProne) Prone();
         //Only change sprint if not ADS and not in air and not idle
         if(!animator.GetBool("aimingDown") && isGrounded && !animator.GetBool("idle"))
         {
-            sprinting = !sprinting;
-            if(sprinting)
+            isSprinting = !isSprinting;
+            if(isSprinting)
             {
                 //Stop reload if necessary
-                if(gameObject.GetComponentInChildren<WeaponManager2>().reloading) gameObject.GetComponentInChildren<WeaponManager2>().CancelReload();
+                if(gameObject.GetComponentInChildren<WeaponManager>().reloading) gameObject.GetComponentInChildren<WeaponManager>().CancelReload();
                 animator.SetBool("strafeLeft", false);
                 animator.SetBool("strafeRight", false);
                 animator.SetBool("moveForward",false);
             }
             
-            animator.SetBool("run",sprinting);
+            animator.SetBool("run",isSprinting);
             
             
-            speed = sprinting ? 7 : 4;
+            speed = isSprinting ? 7 : 4;
         }
     }
 
     public void StopSprint()
     {
         animator.SetBool("run", false);
-        sprinting = false;
+        isSprinting = false;
         speed = 4;      
     }
 
@@ -175,8 +175,13 @@ public class PlayerMotor : MonoBehaviour
         animator.SetBool(exception, true);
     }
 
-    public bool isCrouched()
+    public bool IsCrouched()
     {
-        return crouching;
+        return isCrouching;
+    }
+
+    public bool IsSprinting()
+    {
+        return isSprinting;
     }
 }

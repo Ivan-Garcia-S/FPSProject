@@ -1,6 +1,7 @@
 // Used to procedurally generate a viewcone. 
 // Use polar coordinates for drawing all vertices. 
 using UnityEngine;
+using System;
 
 [RequireComponent (typeof(MeshFilter))]
 [RequireComponent (typeof(MeshRenderer))]
@@ -32,12 +33,8 @@ public class Viewcone : MonoBehaviour
 	}
 	private void Update()
 	{
-
-		//transform.position = head.transform.position + new Vector3(0.015f,0.07f,22.0699f);
 		transform.localPosition =new Vector3(0.015f,0.07f,22.0699f);
-		//transform.rotation = Quaternion.Euler(180, body.transform.rotation.y,transform.rotation.z);
 		transform.rotation = Quaternion.LookRotation(head.transform.forward * -1, head.transform.up);
-		//transform.position = head.transform.position + head.transform.forward * 1;
 	}
 
 	public void Rebuild ()
@@ -146,14 +143,35 @@ public class Viewcone : MonoBehaviour
 		}
 	}
 
-	private void OnTriggerStay (Collider col)
+	/*private void OnTriggerStay (Collider col)
 	{
 		spotter.ObjectSpotted (col);
 	}
-
 	private void OnTriggerExit (Collider col)
 	{
 		spotter.ObjectLeft (col);
+	}
+	*/
+
+	private void OnTriggerEnter(Collider col) 
+	{	
+		try{
+			GameObject soldier = col.GetComponentInParent<CharacterController>().gameObject;
+			spotter.SoldierEntered(soldier);
+		}
+		catch(NullReferenceException){}
+		
+
+	}
+	private void OnTriggerExit(Collider col) 
+	{	
+		try{
+			GameObject soldier = col.GetComponentInParent<CharacterController>().gameObject;
+			spotter.SoldierLeft(soldier);
+		}
+		catch(NullReferenceException){}
+		
+
 	}
         
 }

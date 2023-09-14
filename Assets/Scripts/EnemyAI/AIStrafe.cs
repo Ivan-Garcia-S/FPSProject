@@ -11,7 +11,7 @@ public class AIStrafe : Node
     public Animator animator;
     private float startStrafeRate = 0.002f;
     private float strafeAgainRate = 0.75f;
-    private float maxStrafeDistance = 1.6f;
+    private float maxStrafeDistance = 1.8f;
 
     public AIStrafe(BotManager bot)
     {
@@ -24,7 +24,7 @@ public class AIStrafe : Node
     {
          
         if(AI.attackAction == EnemyAI.AttackAction.NONE){   // If AI currently has no Attack Action
-            if (Random.Range(0f, 1f) <= startStrafeRate)
+            if (Random.Range(0f, 1f) <= startStrafeRate)  //Randomly choose to either strafe or not
             {
                 AI.attackAction = EnemyAI.AttackAction.STRAFE;
                 AI.strafingRight = Random.Range(0f, 1f) <= 0.5f ? true : false; // Set strafe direction to either right or left
@@ -46,6 +46,7 @@ public class AIStrafe : Node
         return state;
     }
 
+    //Choose how far to strafe
     public void SetStrafeDestination()
     {
         float strafeXDistance = Random.Range(0f, maxStrafeDistance);
@@ -55,6 +56,5 @@ public class AIStrafe : Node
         if(AI.strafingRight) botManager.StopMovementExceptFor("strafeRight");
         else if(!AI.strafingRight) botManager.StopMovementExceptFor("strafeLeft");
         else Debug.LogWarning("AI.strafingRight is NULL");
-        
     }
 }

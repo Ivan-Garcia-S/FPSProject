@@ -7,17 +7,16 @@ namespace BehaviorTree
 {
     public abstract class BTree : MonoBehaviour
     {
-        private Node _root = null;
+        private Node root = null;
 
         protected void Start() 
         {
-            _root = SetUpTree();    
+            root = SetUpTree();    
         }
 
         private void Update() 
         {
-            if(_root != null) _root.Evaluate();
-           // else Debug.Log("Root NULL");
+            if(root != null) root.Evaluate();
         }
 
         protected abstract Node SetUpTree();

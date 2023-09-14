@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class AIWeaponManager : MonoBehaviour
 {
+    [Header("References")]
     public GameObject shootPoint;
     public GameObject projectile;
     public GameObject gun;
@@ -12,15 +13,15 @@ public class AIWeaponManager : MonoBehaviour
 
     //Graphics
     public GameObject muzzleFlash;
+
+    [Header("Gun Stats")]
     //Bullet force
     public float shootForce, upwardForce;
     //Gun stats
     public float timeBetweenShots, spread, reloadTime, fireRate;
     public int magazineSize, bulletsPerTap;
-    public bool isAutomatic;
-
     public int bulletsInMag, bulletsShot, bulletsInReserve;
-
+    public bool isAutomatic;
     public bool shooting, reloading;
     public bool allowInvoke = true;
     public bool processedLastShootCall = true;
@@ -47,30 +48,30 @@ public class AIWeaponManager : MonoBehaviour
     public void Shoot(Transform target)
     {
 
-        if (readyToShoot && bulletsInMag > 0 && processedLastShootCall)
+        if (readyToShoot && !reloading && bulletsInMag > 0 && processedLastShootCall)
         {
             //Debug.Log("About to send shot");
+            //Don't shoot again until this function runs through
             processedLastShootCall = false;
             animator.SetBool("shoot", true);
             Transform enemySpine = target.Find("mixamorig:Hips/mixamorig:Spine/mixamorig:Spine1/mixamorig:Spine2");
 
-            //New look at
+            //Rotate AI to correct rotation
             Vector3 rotation = Quaternion.LookRotation(enemySpine.position - AI.transform.position).eulerAngles;
             rotation.x = rotation.z = 0f;
             AI.transform.rotation = Quaternion.Euler(rotation);
             Vector3 shootPoint = transform.Find("Shoot Point").transform.position;
-            //Vector3 shootPoint = AI.transform.Find("pistol/Shoot Point").transform.position;
+            
             //Calculate direction from attackPoint to the targetPoint
             Vector3 directionNoSpread = enemySpine.position - shootPoint;
 
-             //Calculate spread
+            //Calculate spread
             float spreadX = Random.Range(spread, spread);
             float spreadY = Random.Range(spread, spread);
 
             //Direction with spread
             Vector3 directionWithSpread = directionNoSpread + new Vector3(spreadX,spreadY,0); 
             
-            //animator.SetBool("shoot",true);
             ///Create bullet and add force to make it shoot forward
             GameObject bullet = GameObject.Instantiate(projectile, shootPoint, Quaternion.identity);
             bullet.GetComponent<EnemyProjectile>().SendMessage("SetBulletInfo", AI.tag);
@@ -78,7 +79,6 @@ public class AIWeaponManager : MonoBehaviour
 
             rb.AddForce(directionWithSpread.normalized * 100f, ForceMode.Impulse);
             rb.AddForce(transform.up * upwardForce, ForceMode.Impulse);
-            //rb.AddForce(AI.transform.Find("pistol").transform.up * AI.upwardForce, ForceMode.Impulse);
             bulletsInMag--;
             bulletsShot++;
             
@@ -99,18 +99,18 @@ public class AIWeaponManager : MonoBehaviour
             processedLastShootCall = true;
         }
         else if(processedLastShootCall){
-            
+            // Make sure this is the only instance running the Shoot function 
             processedLastShootCall = false;
-            animator.SetBool("shoot",false);
-            animator.SetBool("idle", true);
-            if(bulletsInMag == 0){
+            
+            //TAKE OUT FOR NEW ANIM
+            //animator.SetBool("shoot",false);
+            
+            //Reload if can't shoot because no ammo
+            if(bulletsInMag == 0 && !reloading){
                 Reload();
             }
-
             processedLastShootCall = true;
         }
-
-   
     }
 
     private void ResetShot()
@@ -118,24 +118,32 @@ public class AIWeaponManager : MonoBehaviour
         //Allow shooting and Invoking again
         readyToShoot = true;
         allowInvoke = true;
-        animator.SetBool("shoot", false);
-
+        
+        //TAKE OUT FOR NEW ANIM
+        //animator.SetBool("shoot", false);
     }   
     public void Reload()
     {
         //Debug.Log("Reloading");
-        animator.SetTrigger("reload");
+        animator.SetBool("shoot",false);
+        animator.SetBool("reload",true);
         reloading = true;
         readyToShoot = false;
+        Invoke("StopReloadAnimation", reloadTime - 0.5f);
         Invoke("ReloadFinished", reloadTime);
     }
 
     private void ReloadFinished()
     {
-        animator.SetTrigger("stopReload");
+        ///////OLD SPOT FOR BELOW////
         readyToShoot = true;
         bulletsInMag = magazineSize;
         bulletsInReserve -= bulletsInMag;
         reloading = false;
+    }
+
+    private void StopReloadAnimation()
+    {
+        animator.SetBool("reload", false);
     }
 }

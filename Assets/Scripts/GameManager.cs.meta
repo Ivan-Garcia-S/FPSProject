@@ -4,8 +4,8 @@ MonoImporter:
   externalObjects: {}
   serializedVersion: 2
   defaultReferences:
-  - player: {fileID: 878985384178845389, guid: 3a9408aa69bee4268a8d6801c3b80fbc, type: 3}
-  - ai: {fileID: 7845253484915142269, guid: 5ee387da0824a48ddbefc8bc5f009d8f, type: 3}
+  - player: {fileID: 1532139191396745240, guid: ee836ebc3511d43b2a21df093056af4a, type: 3}
+  - aiSoldier: {fileID: 3878359421860118342, guid: aadf5aee94059441c9147ed1d3977a0f, type: 3}
   - startSpawnPoints: {fileID: 6437520637707111217, guid: 4b20c1b488f4e4d1ab3ad4711a085f72, type: 3}
   executionOrder: 0
   icon: {instanceID: 0}

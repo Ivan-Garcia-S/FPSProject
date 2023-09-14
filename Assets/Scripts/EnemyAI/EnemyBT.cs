@@ -13,6 +13,12 @@ public class EnemyBT : BTree
     {
         Node root = new Selector(new List<Node>
         {
+            //HIDE
+            new Sequence(new List<Node>{
+                new AIHealthIsLow(botManager),
+                new AITakeCover(botManager)
+            }),
+
             //ATTACK
             new Sequence(new List<Node>{
                 new AICheckPlayerInSight(botManager),

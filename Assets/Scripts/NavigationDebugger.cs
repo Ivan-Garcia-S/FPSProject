@@ -8,9 +8,7 @@ public class NavigationDebugger : MonoBehaviour
 {
     [SerializeField]
     private NavMeshAgent agentToDebug;
-    
     private LineRenderer lineRenderer;
-    
     
     // Start is called before the first frame update
     void Start()

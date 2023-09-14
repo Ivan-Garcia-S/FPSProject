@@ -5,21 +5,15 @@ using UnityEngine;
 
 public class PlayerLook : MonoBehaviour
 {
+    [Header("References")]
     public Camera cam;
-
-    private GameObject camSphere;
-    private GameObject head;
+    
+    [Header("Sensitivity")]
     private float xRotation = 0f;
     private float yRotation = 0f;
     public float xSensitivity = 90f;
     public float ySensitivity = 90f;
-    private SkinnedMeshRenderer skinnedMesh;
     
-    private GameObject player;
-    private Transform left;
-    private Transform right;
-    private GameObject leftArm;
-    private GameObject rightArm;
     
     void Awake()
     {
@@ -43,11 +37,6 @@ public class PlayerLook : MonoBehaviour
         */
     }
 
-    void Start()
-    {
-        //Debug.Log("offset is " + (transform.position - cam.transform.position));
-        //(.1, -1.7, -.1)
-    }
     public void ProcessLook(Vector2 inputVector)
     {
         float mouseX = inputVector.x;
@@ -64,6 +53,5 @@ public class PlayerLook : MonoBehaviour
 
         //Rotate player left and right
         transform.Rotate(Vector3.up * mouseX * Time.deltaTime * xSensitivity);
-
     }
 }

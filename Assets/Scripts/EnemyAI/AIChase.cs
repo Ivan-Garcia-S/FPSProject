@@ -7,6 +7,7 @@ using BehaviorTree;
 
 public class AIChase : Node
 {
+    private BotManager botManager;
     private EnemyAI AI;
     private Animator BotAnimator;
     private NavMeshAgent Agent;
@@ -15,6 +16,7 @@ public class AIChase : Node
 
     public AIChase(BotManager bot)
     {
+        botManager = bot;
         AI = bot.AI;
         BotAnimator = bot.animator;
         Agent = AI.agent;
@@ -23,26 +25,29 @@ public class AIChase : Node
 
     public override NodeState Evaluate()
     {
-        //Set AI states appropriately
+        //Set up chasing state
         AI.attackAction = EnemyAI.AttackAction.NONE;
         AI.state = EnemyAI.PlayerState.CHASING;
+        AI.walkPointSet = false;
+        AI.agent.speed = chaseSpeed;
+        BotAnimator.SetBool("shoot",false);
         
         //Want to Chase standing up
         if(AI.isProne) AI.Prone();
         
-        AI.walkPointSet = false;
-        AI.agent.speed = chaseSpeed;
+        
         Debug.Log("CHASING");
 
+        //Set a destination for the AI to move to
         if(!AI.chasePointSet)
         {
             Agent.destination = AI.currentEnemyTarget.position;
             DestinationBox.transform.position = AI.currentEnemyTarget.position;
             AI.chasePointSet = true;
         }  
-        BotAnimator.SetBool("shoot", false);
-        BotAnimator.SetBool("idle", false);
-        BotAnimator.SetBool("run", true);
+        botManager.SetAnimatorState("sprint");
+        //TAKE OUT FOR NEW ANIM
+        //BotAnimator.SetBool("run", true);
 
         state = NodeState.RUNNING;
         return state;
