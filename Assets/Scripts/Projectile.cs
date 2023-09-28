@@ -6,25 +6,33 @@ public class Projectile : MonoBehaviour
 {
     [Header("References")]
     public GameObject bullet;
-    public GameObject hitmarker;
+    //public GameObject hitmarker;
     private PlayerState playerState;
+    private Hitmarker hitmarker;
     
     [Header("Bullet Info")]
     public float damage = 26f;
     public float lifeSpan = 3f;
+    public string enemyTeam;
     
     private void OnEnable() 
     {
         //Debug.Log("Bullet created");
         //hitmarker = GetComponentInParent<WeaponManager>().hitmark.gameObject;
-        if(hitmarker == null){
-            Debug.Log("Hitmark null");
-        }
-        playerState = GameObject.Find("Soldier_M_AR").GetComponent<PlayerState>();
+        //if(hitmarker == null){
+        //    Debug.Log("Hitmark null");
+        //}
+        ///playerState = GameObject.Find("Soldier_M_AR").GetComponent<PlayerState>();
         gameObject.transform.parent = null;
         
     }
 
+    public void SetBulletInfo(string enemyTag, Hitmarker playerHitmarker)
+    {
+        enemyTeam = enemyTag;
+        hitmarker = playerHitmarker;
+
+    }
     private void Update() 
     {
         lifeSpan -= Time.deltaTime;
@@ -34,14 +42,11 @@ public class Projectile : MonoBehaviour
     void OnCollisionEnter(Collision collision)
     {
         //Check if bulet hit enemy soldier
-        //Debug.Log("Collision is " + collision.transform.name);
-
-        if(collision.transform.tag == playerState.enemyTag){
+        if(collision.transform.tag == enemyTeam){
             Debug.Log("Enemy soldier hit");
-            //hitmarker.GetComponent<Hitmarker>().botHit2(); ////////NEED TO ADD BACK/////
+            hitmarker.botHit3();
             collision.transform.GetComponentInParent<BotManager>().TakeDamage(damage);
         }
-        //else Debug.Log("Tag of obj hit = " + collision.transform.tag);
         Destroy(gameObject);
     }
 }

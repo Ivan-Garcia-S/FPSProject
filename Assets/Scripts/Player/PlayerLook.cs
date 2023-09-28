@@ -37,6 +37,10 @@ public class PlayerLook : MonoBehaviour
         */
     }
 
+    void Start() 
+    {
+        cam = GetComponent<PlayerState>().MainCam;
+    }
     public void ProcessLook(Vector2 inputVector)
     {
         float mouseX = inputVector.x;

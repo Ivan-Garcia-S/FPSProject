@@ -6,6 +6,9 @@ using UnityEngine.UI;
 public class PlayerState : MonoBehaviour
 {
     public GameManager Game;
+    public Camera MainCam;
+    public WeaponManager WeaponMgr;
+    public PlayerInputManager InputManager;
     
     [Header("Player Info")]
     private float maxHealth = 100f;
@@ -20,8 +23,6 @@ public class PlayerState : MonoBehaviour
     [Header("Blood UI")]
     public Image overlay;
     public Sprite overlaySprite;
-
-    private float duration;
     private float criticalStateDuration = 3.25f;
     private float fadeSpeed;
     private float durationTimer;
@@ -29,8 +30,12 @@ public class PlayerState : MonoBehaviour
     void Awake()
     {
         Game = GameObject.FindWithTag("GameManager").GetComponent<GameManager>();
+        MainCam = GameObject.FindWithTag("MainCamera").GetComponent<Camera>();
+        WeaponMgr = GetComponentInChildren<WeaponManager>();
+        InputManager = GetComponent<PlayerInputManager>();
         currentHealth = maxHealth;
         criticalState = 0.26f * maxHealth;
+        overlay = GameObject.FindWithTag("Overlay").GetComponent<Image>();
         overlay.color = new Color(overlay.color.r, overlay.color.g, overlay.color.b, 0);
         healthRegenPerSecond = baseHealthRegenPerSecond;
         gameObject.tag = myTag;
@@ -41,9 +46,14 @@ public class PlayerState : MonoBehaviour
     void Update()
     {
         //If character has no health remaining
-        if(currentHealth < 0 && currentHealth > -26){
+        if(currentHealth < 0){
             Debug.Log("You died");
-            Game.UpdateScore(myTag);
+
+            InputManager.DisableInputActions();
+            MainCam.GetComponent<PlayerCamera>().PlayerActive = false;
+            WeaponMgr.CancelInvoke("ReloadFinished");
+            //Destroy(gameObject);
+            Game.HandlePlayerDeath(gameObject);
             //currentHealth = maxHealth;
         }
 
@@ -87,5 +97,15 @@ public class PlayerState : MonoBehaviour
             if(collision.gameObject.GetComponent<EnemyProjectile>() != null)
                 TakeDamage(collision.gameObject.GetComponent<EnemyProjectile>().damage);
         }
+    }
+
+    public void SetDefaultState()
+    {
+        currentHealth = maxHealth;
+        healthRegenPerSecond = baseHealthRegenPerSecond;
+        gameObject.GetComponent<PlayerMotor>().StopMovementExceptFor("idle");
+        WeaponMgr.SetDefaultState();
+        MainCam.GetComponent<PlayerCamera>().PlayerActive = true;
+        InputManager.EnableInputActions();
     }
 }

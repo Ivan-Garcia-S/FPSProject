@@ -26,12 +26,14 @@ public class BotManager : MonoBehaviour
     private float durationTimer;
     private float criticalStateDuration = 3.25f;
     private float criticalStatePercent = 0.26f;
+    private bool dead = false;
     
     // Start is called before the first frame update
     void Awake()
     {
         Game = GameObject.FindWithTag("GameManager").GetComponent<GameManager>();
         destinationPointBox = transform.Find("Destination Point").gameObject;
+        destinationPointBox.SetActive(Game.showDestinationPointBox);
         navDebugger = GetComponentInChildren<LineRenderer>().gameObject;
         healthRegenPerSecond = baseHealthRegenPerSecond;
         criticalState = criticalStatePercent * maxHealth;
@@ -69,11 +71,10 @@ public class BotManager : MonoBehaviour
         currentHealth -= damage;
 
         //Update score if bot killed
-        if(currentHealth <=0 ){
+        if(currentHealth <=0 && !dead){
             navDebugger.SetActive(false);
-            string deadSoldierTag = gameObject.tag;
-            Destroy(bot);
-            Game.UpdateScore(deadSoldierTag);
+            dead = true;
+            Game.HandleAIDeath(bot);
         }
 
         //Reset health regen growth

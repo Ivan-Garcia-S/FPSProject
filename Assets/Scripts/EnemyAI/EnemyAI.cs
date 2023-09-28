@@ -98,6 +98,7 @@ public class EnemyAI : MonoBehaviour
         //Always look at target when strafing
         if(attackAction == AttackAction.STRAFE)
         {
+            Debug.Log("Strafing");
             transform.LookAt(currentEnemyTarget);
         }
         //Get enemies currently on map (NOT NECCESARY RN)

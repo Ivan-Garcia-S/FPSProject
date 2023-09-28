@@ -9,7 +9,7 @@ public class AIStrafe : Node
     public BotManager botManager;
     public EnemyAI AI;
     public Animator animator;
-    private float startStrafeRate = 0.002f;
+    private float startStrafeRate = 0.012f;
     private float strafeAgainRate = 0.75f;
     private float maxStrafeDistance = 1.8f;
 
@@ -22,7 +22,6 @@ public class AIStrafe : Node
 
     public override NodeState Evaluate()
     {
-         
         if(AI.attackAction == EnemyAI.AttackAction.NONE){   // If AI currently has no Attack Action
             if (Random.Range(0f, 1f) <= startStrafeRate)  //Randomly choose to either strafe or not
             {
@@ -40,7 +39,6 @@ public class AIStrafe : Node
                 SetStrafeDestination();
             }
             else AI.attackAction = EnemyAI.AttackAction.NONE;
-            
         }
         state = NodeState.SUCCESS;
         return state;

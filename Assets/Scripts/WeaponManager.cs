@@ -31,7 +31,7 @@ public class WeaponManager: MonoBehaviour
     public float maxRange = 100f;
     public bool isAutomatic;
 
-    int bulletsLeft, bulletsShot;
+    public int bulletsLeft, bulletsShot;
 
     public bool shooting, readyToShoot, reloading;
     public bool allowInvoke = true;
@@ -42,12 +42,14 @@ public class WeaponManager: MonoBehaviour
 
     private Coroutine startADS;
     private Coroutine stopADS;
+    private string enemyTag = "Team2";
 
     [Header("Aiming In")]
     public bool isAimingIn;
     public Transform sightTarget;
     public Transform originalGunSpot;
     private TwoBoneIKConstraint ads;
+    private TwoBoneIKConstraint leftHand;
     public float sightOffset;
     public float aimInTime;
     public bool adsComplete = false;
@@ -66,6 +68,7 @@ public class WeaponManager: MonoBehaviour
         //Set mag to full
         hitmark = GameObject.Find("Hitmarker").GetComponent<Hitmarker>();
         bulletsLeft = magazineSize;
+        crosshair = GameObject.FindWithTag("Crosshair");
         readyToShoot = true;
         isAutomatic = true;
         isAimingIn = false;
@@ -73,6 +76,7 @@ public class WeaponManager: MonoBehaviour
         animator = GetComponentInParent<Animator>();
         sphere = GameObject.Find("Sphere");
         ads = GameObject.Find("RightHandIK_AR").GetComponent<TwoBoneIKConstraint>();
+        leftHand = GameObject.Find("LeftHandIK").GetComponent<TwoBoneIKConstraint>();
         //originalGunSpot = transform.localPosition;
     }
 
@@ -165,6 +169,7 @@ public class WeaponManager: MonoBehaviour
 
         //Instantiate bullet
         GameObject currentBullet = Instantiate(bullet, attackPoint.transform.position, attackPoint.transform.rotation);
+        currentBullet.GetComponent<Projectile>().SetBulletInfo(enemyTag, hitmark);
         //Debug.Log("New bullet shot");
 
         //GameObject currentBullet = Instantiate(bullet, attackPoint.transform, false);
@@ -213,15 +218,22 @@ public class WeaponManager: MonoBehaviour
 
     public void Reload()
     {
-        animator.SetBool("reload",true);
-        reloading = true;
-        Invoke("ReloadFinished", reloadTime);
+        //Only reload if magazine not full
+        if(bulletsLeft < magazineSize)
+        {
+            animator.SetBool("reload",true);
+            reloading = true;
+            StartCoroutine(ReleaseLeftHand());
+            Invoke("ReloadFinished", reloadTime);
+        }
+        
     }
 
     private void ReloadFinished()
     {
         animator.SetBool("reload",false);
         bulletsLeft = magazineSize;
+        StartCoroutine(PlaceBackLeftHand());
         reloading = false;
     }
 
@@ -229,10 +241,32 @@ public class WeaponManager: MonoBehaviour
     {
         CancelInvoke("ReloadFinished");
         animator.SetBool("reload", false);
+        StartCoroutine(PlaceBackLeftHand());
         reloading = false;
     }
 
-
+    IEnumerator ReleaseLeftHand()
+    {
+        float timeElapsedHand = 0;
+        while (timeElapsedHand < 1.1)
+        {
+            leftHand.weight = Mathf.Lerp(leftHand.weight, 0, timeElapsedHand / 1.1f);
+            timeElapsedHand += Time.deltaTime;
+            yield return null;
+        }
+        leftHand.weight = 0;
+    }
+    IEnumerator PlaceBackLeftHand()
+    {
+        float timeElapsedHand = 0;
+        while (timeElapsedHand < 1.1)
+        {
+            leftHand.weight = Mathf.Lerp(leftHand.weight, 1, timeElapsedHand / 1.1f);
+            timeElapsedHand += Time.deltaTime;
+            yield return null;
+        }
+        leftHand.weight = 1;
+    }
     private void AimDownSights()
     {
         if(isAimingIn)  transform.localPosition = Vector3.Lerp(initialADSPosition, sightTarget.position, timeElapsed / aimInTime);//Time.deltaTime * adsSpeed);
@@ -249,17 +283,8 @@ public class WeaponManager: MonoBehaviour
             animator.SetBool("aimingDown",true);
             
             motor.StopSprint();
-
-            //ads.weight = 1;
             startADS = StartCoroutine(ADS());
         }
-        
-        //gameObject.transform.position = fpsCam.transform.position + new Vector3(0,0,1);
-        
-
-        //Ray ray = fpsCam.ViewportPointToRay(new Vector3(0.5f,0.5f, 0));
-        //sightTarget.transform.position = ray.GetPoint(0);
-        //ads.weight = 1;
     }
 
     IEnumerator ADS()
@@ -280,15 +305,10 @@ public class WeaponManager: MonoBehaviour
         isAimingIn = false;
         
         if(startADS != null) StopCoroutine(startADS);
-        //DEBUG//adsComplete = false;
         
         animator.SetBool("aimingDown",false);
-        
-        //ads.weight = 0;
         stopADS = StartCoroutine(exitADS());
        
-        //transform.position = originalGunSpot;
-        //ads.weight = 0;
     }
 
     IEnumerator exitADS()
@@ -317,6 +337,16 @@ public class WeaponManager: MonoBehaviour
         weaponSwayObj.transform.position = weaponSwayPosition;
 
     }
-
+    public void SetDefaultState()
+    {
+        bulletsLeft = magazineSize;
+        animator.SetBool("aimingDown",false);
+        ads.weight = 0;
+        isAimingIn = false;
+        readyToShoot = true;
+        shooting = false;
+        reloading = false;
+        allowInvoke = true;
+    }
 
 }

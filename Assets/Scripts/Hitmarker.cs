@@ -6,6 +6,7 @@ using UnityEngine.UI;
 public class Hitmarker : MonoBehaviour
 {
     //[Header("")]
+    private Coroutine displayHitmarker;
     private Image[] markers;
     public Image img;
     public Color white = new Color32(255,255,255,255);
@@ -19,9 +20,10 @@ public class Hitmarker : MonoBehaviour
 
     void Start()
     {
-        markers = gameObject.GetComponentsInChildren<Image>();
+        //markers = gameObject.GetComponentsInChildren<Image>();
         img = gameObject.GetComponent<Image>();
         img.enabled = true;
+        img.color = clear;
         justHit = false;
 
         //gameObject.SetActive(true);
@@ -80,25 +82,16 @@ public class Hitmarker : MonoBehaviour
         }
         */
     }
-    public IEnumerator botHit(){
-        setAllMarkers(255);
+    public IEnumerator FadeHitmarker(){
         
-        for (float i = markerLifespan; i >= 0 && !interruptHitmarker; i -= Time.deltaTime)
+        float timeElapsedHand = 0;
+        while (timeElapsedHand < 1.7)
         {
-            timeLeft = i;
-            // set color with i as alpha
-            setAllMarkers((byte)i);
-
+            img.color = Color.Lerp(white, clear, timeElapsedHand / 1.7f);
+            timeElapsedHand += Time.deltaTime;
             yield return null;
         }
-        if (interruptHitmarker){
-            interruptHitmarker = false;
-            setAllMarkers(0);
-        }
-        yield return null;
-
-
-       
+        img.color = Color.clear;
         //Invoke("Blah", 2f);
     }
 
@@ -116,6 +109,23 @@ public class Hitmarker : MonoBehaviour
      //   Debug.Log("color = " + img.color.ToString());
         //xInvoke(nameof(ResetJustHit), markerLifespan);
         //Debug.Log("After setting timeleft = " + timeLeft);
+    }
+
+    public void botHit3()
+    {
+        img.color = white;
+        
+       // if(displayHitmarker != null)  StopCoroutine(displayHitmarker);
+        //displayHitmarker = StartCoroutine(HitmarkerCountdown());
+
+        if(displayHitmarker != null)  StopCoroutine(displayHitmarker);
+        displayHitmarker = StartCoroutine(FadeHitmarker());
+    }
+
+    IEnumerator HitmarkerCountdown()
+    {
+        yield return new WaitForSeconds(1.75f);
+        img.enabled = false;
     }
 
     public float HitmarkerTimeRemaining(){

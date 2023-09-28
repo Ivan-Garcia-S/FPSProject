@@ -66,8 +66,8 @@ public class AIWeaponManager : MonoBehaviour
             Vector3 directionNoSpread = enemySpine.position - shootPoint;
 
             //Calculate spread
-            float spreadX = Random.Range(spread, spread);
-            float spreadY = Random.Range(spread, spread);
+            float spreadX = Random.Range(-spread, spread);
+            float spreadY = Random.Range(-spread, spread);
 
             //Direction with spread
             Vector3 directionWithSpread = directionNoSpread + new Vector3(spreadX,spreadY,0); 

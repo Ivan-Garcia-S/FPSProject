@@ -23,7 +23,7 @@ public class EnemyProjectile : MonoBehaviour
         if(lifeSpan <= 0) Destroy(gameObject);
     }
 
-    void OnCollisionStay(Collision collision) {
+    void OnCollisionEnter(Collision collision) {
 
         try
         {
@@ -39,7 +39,9 @@ public class EnemyProjectile : MonoBehaviour
             }
         
         }
-        catch(NullReferenceException){}
+        catch(NullReferenceException){
+           // Debug.Log("Bullet collided with " + collision.gameObject.name);
+        }
         //Destroy bullet unless it goes through a teammate with the same team tag
         
         if(collision.transform.tag != tag && collision.transform.tag != friendlyTag) Destroy(gameObject);  

@@ -7,6 +7,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 416506902856806183, guid: aadf5aee94059441c9147ed1d3977a0f, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 2527a31cf35fe45cea235ae2c0930e06, type: 2}
     - target: {fileID: 847448436882809472, guid: aadf5aee94059441c9147ed1d3977a0f, type: 3}
       propertyPath: m_TagString
       value: Team1
@@ -22,6 +26,10 @@ PrefabInstance:
     - target: {fileID: 1391141357871382551, guid: aadf5aee94059441c9147ed1d3977a0f, type: 3}
       propertyPath: m_TagString
       value: Team1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2573603230168287002, guid: aadf5aee94059441c9147ed1d3977a0f, type: 3}
+      propertyPath: m_RootOrder
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3136383094370383354, guid: aadf5aee94059441c9147ed1d3977a0f, type: 3}
       propertyPath: m_TagString

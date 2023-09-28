@@ -16,7 +16,7 @@ public class PlayerMotor : MonoBehaviour
     [SerializeField] private float speed = 6f;
     [SerializeField] private float gravity = -9.8f;
     private bool isGrounded;
-    private float jumpHeight = 1.2f;
+    private float jumpHeight = 1.4f;
     private bool isCrouching = false;
     private bool isProne = false;
     bool isSprinting = false;
@@ -25,13 +25,15 @@ public class PlayerMotor : MonoBehaviour
     void Start()
     {
         controller = GetComponent<CharacterController>();
-        animator = GetComponentInChildren<Animator>();
+        animator = GetComponent<Animator>();
+
     }
 
     void Update()
     {
         //Constantly update if character is grounded
         isGrounded = controller.isGrounded;
+        if(isGrounded && animator.GetCurrentAnimatorStateInfo(2).IsName("Jump")) animator.SetTrigger("stopJump");
     }
     //Recieve input for InputManager.cs and apply them to character controller
     public void ProcessMove(Vector2 input)
@@ -113,7 +115,9 @@ public class PlayerMotor : MonoBehaviour
             else
             {
                 if(isCrouching) Crouch();
+                animator.SetTrigger("jump");
                 playerVelocity.y = Mathf.Sqrt(jumpHeight * -3f * gravity);
+                //animator.SetTrigger("jump");
                 if(isSprinting) StopSprint();
             }
         }
@@ -184,4 +188,6 @@ public class PlayerMotor : MonoBehaviour
     {
         return isSprinting;
     }
+
+    
 }
