@@ -34,8 +34,8 @@ public class AIPatrol : Node
         
         //End shooting animation
         BotAnimator.SetBool("shoot",false);
-       
-        //Debug.Log("PATROLING");
+        AI.aiWM.adsAnimComplete = false;
+        Debug.Log("PATROLING");
         
         //Want to Patrol standing up
         if(AI.isProne) AI.Prone();
@@ -44,16 +44,15 @@ public class AIPatrol : Node
         if (!AI.walkPointSet) SearchWalkPoint();
 
         //Begin patroling
-        if (AI.walkPointSet && !Agent.hasPath)
+        if (AI.walkPointSet && Agent.destination != AI.walkPoint)//!Agent.hasPath)
         {
             botManager.SetAnimatorState("moveForward");
-            Agent.destination = AI.walkPoint; //SetDestination(walkPoint);
+            Agent.SetDestination(AI.walkPoint);//Agent.destination = AI.walkPoint; //SetDestination(walkPoint);
             DestinationBox.transform.position = AI.walkPoint;
         }
         Vector3 distanceToWalkPoint = AI.transform.position - AI.walkPoint;
-
-        //If walkpoint reached stop moving
-        if (distanceToWalkPoint.magnitude < 1f)
+        //If walkpoint reached stop moving, add extra stopping distance for more leeway
+        if (distanceToWalkPoint.magnitude <= botManager.stoppingDistance + .5f)
         {
             botManager.SetAnimatorState("idle");
             AI.walkPointSet = false;

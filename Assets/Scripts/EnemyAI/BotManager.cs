@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class BotManager : MonoBehaviour
 {
@@ -18,8 +19,10 @@ public class BotManager : MonoBehaviour
     [Header("AI State")]
     public float currentHealth = 100f;
     public float maxHealth = 100f;
+    private float currentDistanceFromPoint = -1;
     [HideInInspector]
     public float criticalState;
+    public float stoppingDistance;
     private float baseHealthRegenPerSecond = 5f;
     private float healthRegenPerSecond;
     private float healthRegenAcceleration = 15f;
@@ -27,6 +30,9 @@ public class BotManager : MonoBehaviour
     private float criticalStateDuration = 3.25f;
     private float criticalStatePercent = 0.26f;
     private bool dead = false;
+    private float normalSpeed = 4f;
+    private float crouchProneSpeedMult = 0.5f;
+    
     
     // Start is called before the first frame update
     void Awake()
@@ -34,21 +40,28 @@ public class BotManager : MonoBehaviour
         Game = GameObject.FindWithTag("GameManager").GetComponent<GameManager>();
         destinationPointBox = transform.Find("Destination Point").gameObject;
         destinationPointBox.SetActive(Game.showDestinationPointBox);
-        navDebugger = GetComponentInChildren<LineRenderer>().gameObject;
+        //navDebugger = GetComponentInChildren<LineRenderer>().gameObject;
         healthRegenPerSecond = baseHealthRegenPerSecond;
         criticalState = criticalStatePercent * maxHealth;
         botCollider = GetComponent<CapsuleCollider>();
-        patrolPoints = new Transform[6];
+        patrolPointObj = GameObject.FindWithTag("PatrolPoints");
+        patrolPoints = new Transform[patrolPointObj.transform.childCount];
         AI = GetComponent<EnemyAI>();
         animator = GetComponent<Animator>();
+        stoppingDistance = GetComponent<NavMeshAgent>().stoppingDistance;
         for(int i = 0; i < patrolPoints.Length; i++){
             patrolPoints[i] = patrolPointObj.transform.GetChild(i);
         }
 
         //TESTING
-        navDebugger.SetActive(false);
+        //navDebugger.SetActive(true);
     }
 
+    void Start() 
+    {
+        InvokeRepeating("MoveIfStuck", 5.0f, 3f);
+
+    }
     // Update is called once per frame
     void Update()
     {
@@ -72,7 +85,7 @@ public class BotManager : MonoBehaviour
 
         //Update score if bot killed
         if(currentHealth <=0 && !dead){
-            navDebugger.SetActive(false);
+            //navDebugger.SetActive(false);
             dead = true;
             Game.HandleAIDeath(bot);
         }
@@ -125,7 +138,6 @@ public class BotManager : MonoBehaviour
                 Debug.LogWarning("New AI state not found");
                 break;
 
-            
         }
         if(changeProne) animator.SetBool("prone", !animator.GetBool("prone"));    
         if(changeCrouch) animator.SetBool("crouched", !animator.GetBool("crouched")); 
@@ -141,6 +153,17 @@ public class BotManager : MonoBehaviour
         animator.SetBool("moveBack", false);
         animator.SetBool("idle", false);
         animator.SetBool(exception, true);
+    }
+
+    void MoveIfStuck()
+    {
+        if(currentDistanceFromPoint == -1) currentDistanceFromPoint = AI.agent.remainingDistance;
+        else if (AI.agent.remainingDistance == currentDistanceFromPoint) AI.agent.SetDestination(patrolPoints[6].position); 
+        
+    }
+    public float GetCrouchProneSpeed()
+    {
+        return normalSpeed * crouchProneSpeedMult;
     }
 
     

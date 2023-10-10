@@ -38,8 +38,9 @@ public class EnemyAI : MonoBehaviour
     [Header("Patroling")]
     //Patroling
     public Vector3 walkPoint;
-    [HideInInspector]
     public bool walkPointSet;
+    [HideInInspector]
+    
     //public float walkPointRange;
     private Vector3 oldPosition;
     public Transform[] patrolPoints;

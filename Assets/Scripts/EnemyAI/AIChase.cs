@@ -31,7 +31,7 @@ public class AIChase : Node
         AI.walkPointSet = false;
         AI.agent.speed = chaseSpeed;
         BotAnimator.SetBool("shoot",false);
-        
+        AI.aiWM.adsAnimComplete = false;
         //Want to Chase standing up
         if(AI.isProne) AI.Prone();
         

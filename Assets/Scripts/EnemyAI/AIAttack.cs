@@ -11,6 +11,8 @@ public class AIAttack : Node
     private AIWeaponManager aiWM;
     private Animator BotAnimator;
     private float shootWalkSpeed = 2.6f;
+    private float firstBulletDelayMin = 0.6f;
+    private float firstBulletDelayMax = 2.3f;
 
     public AIAttack(BotManager bot)
     {
@@ -22,6 +24,8 @@ public class AIAttack : Node
 
     public override NodeState Evaluate()
     {
+        //if(AI.state != EnemyAI.PlayerState.ATTACKING) aiWM.canShootFirstBullet = false;
+        
         //Set up attacking state
         AI.state = EnemyAI.PlayerState.ATTACKING;
         AI.walkPointSet = false;
@@ -36,11 +40,25 @@ public class AIAttack : Node
             AI.agent.SetDestination(AI.transform.position);
             botManager.SetAnimatorState("idle");
         }
+        //Set delay for first shot fired or shoot if already shooting
+        if(aiWM.aiNerfOn == true)
+        {
+            float waitTime = Random.Range(firstBulletDelayMin, firstBulletDelayMax);
+            //Debug.Log("Wait time = " + waitTime);
+            aiWM.StartCountdown(waitTime);
         
-        //Attack target
-        aiWM.Shoot(AI.currentEnemyTarget);
+            Debug.Log("Cant shoot YET");
+        } 
+        
+        else 
+        {
+            aiWM.Shoot(AI.currentEnemyTarget);
+        }
 
+        //aiWM.Shoot(AI.currentEnemyTarget);
         state = NodeState.SUCCESS;
         return state;
     }
+    
+
 }

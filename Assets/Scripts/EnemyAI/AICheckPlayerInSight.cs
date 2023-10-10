@@ -10,6 +10,7 @@ public class AICheckPlayerInSight : Node
     public AICheckPlayerInSight(BotManager bot)
     {
         AI = bot.AI;
+        
     }
 
     //Return if the AI currently spots an enemy
@@ -24,7 +25,7 @@ public class AICheckPlayerInSight : Node
             //enemySoldier.transform.Find("mixamorig:Hips/mixamorig:Spine/mixamorig:Spine1/mixamorig:Spine2").transform.position - gun.shootPoint.transform.position);
 
             //Find out if there's a clear line of sight from the AI's gun to the enemy soldier
-            if(Physics.Raycast (new Ray(AI.aiWM.shootPoint.transform.position, AI.currentEnemyTarget.Find("mixamorig:Hips/mixamorig:Spine/mixamorig:Spine1/mixamorig:Spine2").transform.position - AI.aiWM.shootPoint.transform.position), out newHit))
+            if(Physics.Raycast (new Ray(AI.aiWM.shootPoint.transform.position, AI.currentEnemyTarget.Find("mixamorig:Hips/mixamorig:Spine/mixamorig:Spine1/mixamorig:Spine2").transform.position - AI.aiWM.shootPoint.transform.position), out newHit, 200f,AI.detector.GetLayerMask()))
             {
                 if(newHit.collider.CompareTag(AI.enemyTag)) 
                 {
@@ -39,14 +40,14 @@ public class AICheckPlayerInSight : Node
 
         if(AI.currentEnemyTarget == null)
         {
-            foreach(GameObject soldier in AI.detector.visibleEnemies)
+            foreach(GameObject soldier in AI.detector.VisibleEnemies)
             {
                 if(soldier != null && (oldTarget == null || soldier.transform != oldTarget))
                 {
                     RaycastHit newHit;
 
                     //Find out if there's a clear line of sight from the AI's gun to the enemy soldier
-                    if(Physics.Raycast (new Ray(AI.aiWM.shootPoint.transform.position, soldier.transform.Find("mixamorig:Hips/mixamorig:Spine/mixamorig:Spine1/mixamorig:Spine2").transform.position - AI.aiWM.shootPoint.transform.position), out newHit))
+                    if(Physics.Raycast (new Ray(AI.aiWM.shootPoint.transform.position, soldier.transform.Find("mixamorig:Hips/mixamorig:Spine/mixamorig:Spine1/mixamorig:Spine2").transform.position - AI.aiWM.shootPoint.transform.position), out newHit, 200f,AI.detector.GetLayerMask()))
                     {
                         if(newHit.collider.CompareTag(AI.enemyTag)) 
                         {
@@ -61,7 +62,6 @@ public class AICheckPlayerInSight : Node
         
         //if(AI.currentEnemyTarget != null) state = NodeState.SUCCESS;
         //else state = NodeState.FAILURE;
-        
         state = NodeState.FAILURE;
         return state;
     }

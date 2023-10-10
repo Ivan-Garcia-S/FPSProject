@@ -1307,6 +1307,7 @@ GameObject:
   - component: {fileID: 4112871167956933801}
   - component: {fileID: 4112871167956933800}
   - component: {fileID: 4112871167956933804}
+  - component: {fileID: 8145894187838001617}
   m_Layer: 7
   m_Name: AI_Soldier_T2
   m_TagString: Team2
@@ -1331,6 +1332,7 @@ Transform:
   - {fileID: 4112871168187269991}
   - {fileID: 4112871167318187589}
   - {fileID: 1868898278}
+  - {fileID: 4356768537507286134}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1367,7 +1369,7 @@ CharacterController:
   m_Enabled: 1
   serializedVersion: 2
   m_Height: 1.82
-  m_Radius: 0.34
+  m_Radius: 0.55
   m_SlopeLimit: 45
   m_StepOffset: 0.3
   m_SkinWidth: 0.08
@@ -1385,8 +1387,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 030851c909e9347b182063662a1e0b59, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  alertIcon: {fileID: 4112871168187269984}
-  visibleEnemies: []
+  AlertIcon: {fileID: 0}
+  VisibleEnemies: []
   AI: {fileID: 0}
 --- !u!114 &4112871167956933796
 MonoBehaviour:
@@ -1467,6 +1469,7 @@ MonoBehaviour:
   currentHealth: 100
   maxHealth: 100
   criticalState: 0
+  stoppingDistance: 0
 --- !u!114 &4112871167956933802
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1533,10 +1536,10 @@ NavMeshAgent:
   m_GameObject: {fileID: 3878359421860118342}
   m_Enabled: 1
   m_AgentTypeID: 0
-  m_Radius: 0.36
+  m_Radius: 0.8
   m_Speed: 4
   m_Acceleration: 8
-  avoidancePriority: 50
+  avoidancePriority: 5
   m_AngularSpeed: 200
   m_StoppingDistance: 0
   m_AutoTraverseOffMeshLink: 1
@@ -1545,7 +1548,7 @@ NavMeshAgent:
   m_Height: 1.82
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
-  m_ObstacleAvoidanceType: 2
+  m_ObstacleAvoidanceType: 3
 --- !u!114 &4112871167956933804
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1630,6 +1633,20 @@ MonoBehaviour:
   - {fileID: 3558666012053038187}
   - {fileID: 1254928927931815103}
   - {fileID: 6248659406139733021}
+--- !u!136 &8145894187838001617
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3878359421860118342}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 0
+  m_Radius: 0.55
+  m_Height: 1.82
+  m_Direction: 1
+  m_Center: {x: 0, y: 0.91, z: 0}
 --- !u!1 &3897542315008531485
 GameObject:
   m_ObjectHideFlags: 0
@@ -1794,7 +1811,7 @@ GameObject:
   - component: {fileID: 4112871166818417419}
   - component: {fileID: 4112871166818417412}
   - component: {fileID: 4112871166818417413}
-  m_Layer: 2
+  m_Layer: 8
   m_Name: Viewcone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2114,7 +2131,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &4112871167318187589
 Transform:
   m_ObjectHideFlags: 0
@@ -3849,6 +3866,51 @@ Transform:
   m_Father: {fileID: 6497981832163714250}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &6668329603501964496
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4356768537507286134}
+  - component: {fileID: 5287430072579639568}
+  m_Layer: 14
+  m_Name: PlayerCollider
+  m_TagString: Team2
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4356768537507286134
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6668329603501964496}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 4510746401846765052}
+  m_RootOrder: 6
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!136 &5287430072579639568
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6668329603501964496}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  m_Radius: 0.64
+  m_Height: 13.59
+  m_Direction: 1
+  m_Center: {x: 0, y: 6.7, z: 0}
 --- !u!1 &6797201864917025139
 GameObject:
   m_ObjectHideFlags: 0
@@ -4533,6 +4595,7 @@ MonoBehaviour:
   allowInvoke: 1
   processedLastShootCall: 1
   readyToShoot: 0
+  aiNerfOn: 0
 --- !u!1001 &4112871168096154117
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4606,14 +4669,14 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ffb3f5f9531da764c906b0baf3285c62, type: 3}
---- !u!1 &3878359422633512788 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: ffb3f5f9531da764c906b0baf3285c62, type: 3}
-  m_PrefabInstance: {fileID: 4112871168096154117}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &4510746402148341230 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: ffb3f5f9531da764c906b0baf3285c62, type: 3}
+  m_PrefabInstance: {fileID: 4112871168096154117}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &3878359422633512788 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: ffb3f5f9531da764c906b0baf3285c62, type: 3}
   m_PrefabInstance: {fileID: 4112871168096154117}
   m_PrefabAsset: {fileID: 0}
 --- !u!114 &4112871167401236902
@@ -4651,7 +4714,7 @@ MonoBehaviour:
   timeBetweenShots: 0
   spread: 0.72
   reloadTime: 2.5
-  fireRate: 0.1
+  fireRate: 0.22
   magazineSize: 35
   bulletsPerTap: 1
   bulletsInMag: 0
@@ -4663,3 +4726,4 @@ MonoBehaviour:
   allowInvoke: 1
   processedLastShootCall: 1
   readyToShoot: 0
+  aiNerfOn: 0

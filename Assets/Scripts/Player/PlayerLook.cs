@@ -11,6 +11,10 @@ public class PlayerLook : MonoBehaviour
     [Header("Sensitivity")]
     private float xRotation = 0f;
     private float yRotation = 0f;
+    [SerializeField]
+    private float minClamp = -80f;
+    [SerializeField]
+    private float maxClamp = 80f;
     public float xSensitivity = 90f;
     public float ySensitivity = 90f;
     
@@ -48,7 +52,7 @@ public class PlayerLook : MonoBehaviour
 
         //Calculate camera rotation for looking up and down
         xRotation -= (mouseY * Time.deltaTime) * ySensitivity;
-        xRotation = Mathf.Clamp(xRotation, -80f, 80f);
+        xRotation = Mathf.Clamp(xRotation, minClamp, maxClamp);
 
         yRotation += (mouseX * Time.deltaTime) * xSensitivity;
 
@@ -57,5 +61,18 @@ public class PlayerLook : MonoBehaviour
 
         //Rotate player left and right
         transform.Rotate(Vector3.up * mouseX * Time.deltaTime * xSensitivity);
+    }
+
+    public void SetProneSettings(bool isProne)
+    {
+        if(isProne)
+        {
+            minClamp = -28.8f;
+            maxClamp = 36.5f;
+        }
+        else{
+            minClamp = -80f;
+            maxClamp = 80f;
+        }
     }
 }

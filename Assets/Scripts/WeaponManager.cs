@@ -50,6 +50,8 @@ public class WeaponManager: MonoBehaviour
     public Transform originalGunSpot;
     private TwoBoneIKConstraint ads;
     private TwoBoneIKConstraint leftHand;
+    private Transform leftHandTarget;
+    private Transform leftHandTargetProne;
     public float sightOffset;
     public float aimInTime;
     public bool adsComplete = false;
@@ -77,6 +79,8 @@ public class WeaponManager: MonoBehaviour
         sphere = GameObject.Find("Sphere");
         ads = GameObject.Find("RightHandIK_AR").GetComponent<TwoBoneIKConstraint>();
         leftHand = GameObject.Find("LeftHandIK").GetComponent<TwoBoneIKConstraint>();
+        leftHandTarget = transform.Find("LeftHandIKTarget");
+        leftHandTargetProne = transform.Find("LeftHandIKTargetProne");
         //originalGunSpot = transform.localPosition;
     }
 
@@ -284,6 +288,7 @@ public class WeaponManager: MonoBehaviour
             
             motor.StopSprint();
             startADS = StartCoroutine(ADS());
+            motor.ADSActive(true);
         }
     }
 
@@ -308,7 +313,7 @@ public class WeaponManager: MonoBehaviour
         
         animator.SetBool("aimingDown",false);
         stopADS = StartCoroutine(exitADS());
-       
+        motor.ADSActive(false);
     }
 
     IEnumerator exitADS()
@@ -347,6 +352,21 @@ public class WeaponManager: MonoBehaviour
         shooting = false;
         reloading = false;
         allowInvoke = true;
+    }
+    public void SetProneSettings(bool isProne)
+    {
+        //leftHand.data.target = isProne ? leftHandTargetProne : leftHandTarget;
+        //leftHandTarget.position = new Vector3(-0.92f,-0.95f,-2.97f);
+        if(isProne)
+        {
+            leftHandTarget.localPosition = new Vector3(-0.92f,-0.95f,-2.97f);
+            leftHandTarget.localEulerAngles = new Vector3(358.42f,272.68f,293.74f);
+        } //leftHandTarget.SetPositionAndRotation(new Vector3(-0.92f,-0.95f,-2.97f), Quaternion.Euler(new Vector3(358.42f,272.68f,293.74f)));  
+        else 
+        {
+            leftHandTarget.localPosition = new Vector3(-0.13f,-0.027f,-0.57f);
+            leftHandTarget.localEulerAngles = new Vector3(342.30f,86.89f,92.97f);
+        }//leftHandTarget.SetPositionAndRotation(new Vector3(-0.13f,-0.027f,-0.57f), Quaternion.Euler(new Vector3(342.30f,86.89f,92.97f)));
     }
 
 }

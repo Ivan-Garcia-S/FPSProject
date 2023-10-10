@@ -175,6 +175,10 @@ PrefabInstance:
       propertyPath: m_TagString
       value: Team1
       objectReference: {fileID: 0}
+    - target: {fileID: 6668329603501964496, guid: aadf5aee94059441c9147ed1d3977a0f, type: 3}
+      propertyPath: m_TagString
+      value: Team1
+      objectReference: {fileID: 0}
     - target: {fileID: 6797201864917025139, guid: aadf5aee94059441c9147ed1d3977a0f, type: 3}
       propertyPath: m_TagString
       value: Team1

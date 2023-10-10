@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using UnityEngine.AI;
 
 public class GameManager : MonoBehaviour
 {
@@ -20,7 +21,7 @@ public class GameManager : MonoBehaviour
     public bool showDestinationPointBox = false;
     
     [HideInInspector]
-    private int teamSize = 5;
+    private int teamSize = 1;
     private string playerName = "Soldier_M_AR";
     private static string team1 = "Team1";
     private static string team2 = "Team2";
@@ -47,10 +48,11 @@ public class GameManager : MonoBehaviour
         {
             respawnPoints.Add(respawnParent.GetChild(i));
         }
-        Debug.Log("Repawn count is" + respawnPoints.Count);
+        //Debug.Log("Repawn count is" + respawnPoints.Count);
         if(teamSize < 1){
             Debug.LogError("Team size cannot be less than 1, change teamSize in GameManager");
         }
+        NavMesh.avoidancePredictionTime = 4;
     }
 
     void Start()

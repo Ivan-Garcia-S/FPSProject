@@ -6,37 +6,42 @@ using UnityEngine;
 
 public class ViewconeDetection : MonoBehaviour {
 
-	public GameObject alertIcon;
+	public GameObject AlertIcon;
 	private string objectTag; 
-	public List<GameObject> visibleEnemies;
+	public List<GameObject> VisibleEnemies;
 	public EnemyAI AI;
-	private AIWeaponManager gun;
+	private AIWeaponManager Gun;
+	private int layerMask;
+	
 
 	void Start () 
 	{
 		AI = gameObject.GetComponent<EnemyAI>();
 		if(AI.enemyTag != null)  objectTag = AI.enemyTag;
 		//alertIcon.SetActive (false);
-		visibleEnemies = new List<GameObject>();
-		gun = GetComponentInChildren<AIWeaponManager>();
+		VisibleEnemies = new List<GameObject>();
+		Gun = GetComponentInChildren<AIWeaponManager>();
+		layerMask = LayerMask.GetMask("IgnoreAllButPlayer");
+		layerMask = ~layerMask;
 	}
 
 	void Update() 
 	{
 		if(objectTag != AI.enemyTag){
-			visibleEnemies.Clear();
+			VisibleEnemies.Clear();
 			objectTag = AI.enemyTag;
 			AI.currentEnemyTarget = null;
 			//alertIcon.SetActive(false);
 		}
 
 		//Remove enemies from list one by one if they are no longer visible
-		if(visibleEnemies.Count > 0 && visibleEnemies[0] == null){
-			visibleEnemies.RemoveAt(0);
+		if(VisibleEnemies.Count > 0 && VisibleEnemies[0] == null){
+			VisibleEnemies.RemoveAt(0);
 		}
 		
 	}
 	//Called every instant a GameObject is touching the Viewcone
+	//NO LONGER USED
 	public void ObjectSpotted (Collider col) 
 	{
 		
@@ -50,13 +55,14 @@ public class ViewconeDetection : MonoBehaviour {
 				//enemySoldier.transform.Find("mixamorig:Hips/mixamorig:Spine/mixamorig:Spine1/mixamorig:Spine2").transform.position - gun.shootPoint.transform.position);
 
 				//Find out if there's a clear line of sight from the AI's gun to the enemy soldier
-				if(Physics.Raycast (new Ray(gun.shootPoint.transform.position, enemySoldier.transform.Find("mixamorig:Hips/mixamorig:Spine/mixamorig:Spine1/mixamorig:Spine2").transform.position - gun.shootPoint.transform.position), out newHit))
+				if(Physics.Raycast (new Ray(Gun.shootPoint.transform.position, enemySoldier.transform.Find("mixamorig:Hips/mixamorig:Spine/mixamorig:Spine1/mixamorig:Spine2").transform.position - Gun.shootPoint.transform.position), out newHit, 200f,layerMask))
 				{
+					Debug.Log("Layer is " + newHit.collider.gameObject.layer);
 					if(newHit.collider.CompareTag(objectTag)) 
 					{
-						if(!visibleEnemies.Contains(enemySoldier)) //Add enemy to the list of enemies visible to the AI
+						if(!VisibleEnemies.Contains(enemySoldier)) //Add enemy to the list of enemies visible to the AI
 						{
-							visibleEnemies.Add(enemySoldier);
+							VisibleEnemies.Add(enemySoldier);
 							if(AI.currentEnemyTarget == null) AI.currentEnemyTarget = enemySoldier.transform;
 						}
 						//Debug.LogWarning (objectTag + " player spotted.");
@@ -68,7 +74,7 @@ public class ViewconeDetection : MonoBehaviour {
 						if(enemySoldier.transform == AI.currentEnemyTarget) //Remove enemy from the list of visible enemies to the AI if the view is obstructed
 						{
 							Transform oldTarget = AI.currentEnemyTarget;
-							visibleEnemies.Remove(enemySoldier);
+							VisibleEnemies.Remove(enemySoldier);
 							SetNewTargetEnemy();
 							if(AI.currentEnemyTarget == oldTarget)  AI.currentEnemyTarget = null;
 						}
@@ -84,9 +90,9 @@ public class ViewconeDetection : MonoBehaviour {
 	{
 		if(objectTag != null && soldier.CompareTag(objectTag)) // Check if collider is attached to an enemy
 		{
-			if(!visibleEnemies.Contains(soldier)) //Add enemy to the list of enemies visible to the AI
+			if(!VisibleEnemies.Contains(soldier)) //Add enemy to the list of enemies visible to the AI
 			{
-				visibleEnemies.Add(soldier);
+				VisibleEnemies.Add(soldier);
 			}
 		}
 	}
@@ -95,7 +101,7 @@ public class ViewconeDetection : MonoBehaviour {
 	{
 		if(objectTag != null && soldier.CompareTag(objectTag)) // Check if collider is attached to an enemy
 		{
-			visibleEnemies.Remove(soldier);	//Remove enemy from list of visible enemies if they leave the Viewcone
+			VisibleEnemies.Remove(soldier);	//Remove enemy from list of visible enemies if they leave the Viewcone
 			if(AI.currentEnemyTarget == soldier.transform)
 			{
 				AI.currentEnemyTarget = null;
@@ -112,14 +118,14 @@ public class ViewconeDetection : MonoBehaviour {
 			//Check if collider is attached to an enemy soldier
 			if(objectTag != null && enemySoldier.CompareTag(objectTag)){	
 			//alertIcon.SetActive (false);
-			visibleEnemies.Remove(enemySoldier);	//Remove enemy from list of visible enemies if they leave the Viewcone
+			VisibleEnemies.Remove(enemySoldier);	//Remove enemy from list of visible enemies if they leave the Viewcone
 			if(AI.currentEnemyTarget == enemySoldier.transform)
 			{
 				Transform oldTarget = AI.currentEnemyTarget;
 				SetNewTargetEnemy();
 				if(AI.currentEnemyTarget == oldTarget)  AI.currentEnemyTarget = null;
 			}
-			if(visibleEnemies.Count == 0) alertIcon.SetActive (false);
+			if(VisibleEnemies.Count == 0) AlertIcon.SetActive (false);
 		} 
 		}
 		catch(NullReferenceException){}
@@ -131,7 +137,7 @@ public class ViewconeDetection : MonoBehaviour {
 	//Set a new enemy target if the old target leaves the viewcone
 	private void SetNewTargetEnemy()
 	{
-		foreach(GameObject visibleEnemy in visibleEnemies)
+		foreach(GameObject visibleEnemy in VisibleEnemies)
 		{
 			if(visibleEnemy != null)
 			{
@@ -140,5 +146,10 @@ public class ViewconeDetection : MonoBehaviour {
 			} 
 		}
 		return;
+	}
+
+	public int GetLayerMask()
+	{
+		return layerMask;
 	}
 }

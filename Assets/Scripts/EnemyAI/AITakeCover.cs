@@ -48,9 +48,8 @@ public class AITakeCover : Node
             if (Random.Range(0f, 1f) <= takeCoverRate)
             {
                 AI.state = EnemyAI.PlayerState.HIDING;
-
-                //AI.canInvokeStopHiding = true;
-            
+                AI.aiWM.animator.SetBool("shoot", false);
+                AI.aiWM.adsAnimComplete = false;
                 //If there's a current target then run away from that target, else take cover at the nearest cover point
                 if(AI.currentEnemyTarget != null)
                 {

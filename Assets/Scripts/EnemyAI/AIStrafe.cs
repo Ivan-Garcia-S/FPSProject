@@ -47,7 +47,7 @@ public class AIStrafe : Node
     //Choose how far to strafe
     public void SetStrafeDestination()
     {
-        float strafeXDistance = Random.Range(0f, maxStrafeDistance);
+        float strafeXDistance = Random.Range(0.2f, maxStrafeDistance);
         strafeXDistance = AI.strafingRight == true ? strafeXDistance : strafeXDistance * -1;
         AI.strafeDestination = AI.transform.position + AI.transform.right * strafeXDistance; // Set strafe destination
         AI.agent.SetDestination(AI.strafeDestination);

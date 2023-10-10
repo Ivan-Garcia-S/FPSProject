@@ -7,8 +7,10 @@ public class AIGoProne : Node
     public EnemyAI AI;
     public Animator animator;
     private float proneRate = 0.0009f;
+    private BotManager botManager;
     public AIGoProne(BotManager bot)
     {
+        botManager = bot;
         AI = bot.AI;
         animator = bot.animator;
     }
@@ -24,6 +26,7 @@ public class AIGoProne : Node
                 AI.isProne = true;
                 AI.attackAction = EnemyAI.AttackAction.DROPSHOT;
                 animator.SetBool("prone", true);
+                AI.agent.speed = botManager.GetCrouchProneSpeed();
             }
         
         }

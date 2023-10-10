@@ -490,7 +490,7 @@ CharacterController:
   m_Height: 2
   m_Radius: 0.33
   m_SlopeLimit: 45
-  m_StepOffset: 0.3
+  m_StepOffset: 0.4
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
   m_Center: {x: 0, y: 0.92, z: 0}
@@ -523,6 +523,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Game: {fileID: 2600860919504453131, guid: 84381c4fbcd864a9f847d37c5a476eec, type: 3}
+  MainCam: {fileID: 0}
+  WeaponMgr: {fileID: 0}
+  InputManager: {fileID: 0}
   currentHealth: 0
   myTag: Team1
   enemyTag: Team2
@@ -3878,6 +3881,8 @@ MonoBehaviour:
   bulletsPerTap: 1
   maxRange: 100
   isAutomatic: 1
+  bulletsLeft: 0
+  bulletsShot: 0
   shooting: 0
   readyToShoot: 0
   reloading: 0
@@ -4061,6 +4066,8 @@ MonoBehaviour:
   bulletsPerTap: 1
   maxRange: 100
   isAutomatic: 0
+  bulletsLeft: 0
+  bulletsShot: 0
   shooting: 0
   readyToShoot: 0
   reloading: 0
