@@ -31,7 +31,9 @@ public class EnemyBT : BTree
             //CHASE
             new Sequence(new List<Node>
             {
-                new AICheckPlayerInSight(botManager),
+                new Selector(new List<Node>{
+                    new AICheckPlayerInSight(botManager), 
+                    new AICheckHasLastEnemy(botManager)}),
                 new AIChase(botManager)
             }),
             //PATROL

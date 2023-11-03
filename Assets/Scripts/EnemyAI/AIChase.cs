@@ -41,15 +41,16 @@ public class AIChase : Node
         //Set a destination for the AI to move to
         if(!AI.chasePointSet)
         {
-            Agent.destination = AI.currentEnemyTarget.position;
-            DestinationBox.transform.position = AI.currentEnemyTarget.position;
+            Transform target = AI.currentEnemyTarget == null ? AI.lastEnemyShotAt : AI.currentEnemyTarget;
+            Agent.destination = target.position;
+            DestinationBox.transform.position = target.position;
             AI.chasePointSet = true;
         }  
         botManager.SetAnimatorState("sprint");
         //TAKE OUT FOR NEW ANIM
         //BotAnimator.SetBool("run", true);
 
-        state = NodeState.RUNNING;
+        state = NodeState.SUCCESS;
         return state;
     }
 

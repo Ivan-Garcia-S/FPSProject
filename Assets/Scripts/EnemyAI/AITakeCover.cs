@@ -13,6 +13,7 @@ public class AITakeCover : Node
     private Vector3 soldierEyeHeight = new Vector3(0, 1.74f, 0);
     private float hideSpeed = 7f;
     private const float MAXLEVELLENGTH = 200f;
+    
 
     public AITakeCover(BotManager bot)
     {
@@ -48,6 +49,11 @@ public class AITakeCover : Node
             if (Random.Range(0f, 1f) <= takeCoverRate)
             {
                 AI.state = EnemyAI.PlayerState.HIDING;
+                AI.attackAction = EnemyAI.AttackAction.NONE;
+                //Debug.LogWarning(AI.name + "HIDING NOW");
+                
+                //botManager.Game.DebugHiding(AI.name);   DEBUG
+
                 AI.aiWM.animator.SetBool("shoot", false);
                 AI.aiWM.adsAnimComplete = false;
                 //If there's a current target then run away from that target, else take cover at the nearest cover point

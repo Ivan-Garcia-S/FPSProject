@@ -17,27 +17,34 @@ public class ViewconeDetection : MonoBehaviour {
 	void Start () 
 	{
 		AI = gameObject.GetComponent<EnemyAI>();
-		if(AI.enemyTag != null)  objectTag = AI.enemyTag;
+		if(AI.enemyTag != null){
+			objectTag = AI.enemyTag;
+		}  
+		else{
+			Debug.Log("AI has no enemy TAG!!");
+		}
 		//alertIcon.SetActive (false);
 		VisibleEnemies = new List<GameObject>();
 		Gun = GetComponentInChildren<AIWeaponManager>();
-		layerMask = LayerMask.GetMask("IgnoreAllButPlayer");
+		layerMask = LayerMask.GetMask("IgnoreAllButPlayer", "Ignore Raycast");
 		layerMask = ~layerMask;
 	}
 
 	void Update() 
 	{
-		if(objectTag != AI.enemyTag){
+		/*if(objectTag != AI.enemyTag){
 			VisibleEnemies.Clear();
 			objectTag = AI.enemyTag;
 			AI.currentEnemyTarget = null;
 			//alertIcon.SetActive(false);
 		}
+		*/
 
 		//Remove enemies from list one by one if they are no longer visible
-		if(VisibleEnemies.Count > 0 && VisibleEnemies[0] == null){
+		/*if(VisibleEnemies.Count > 0 && VisibleEnemies[0] == null){
 			VisibleEnemies.RemoveAt(0);
 		}
+		*/
 		
 	}
 	//Called every instant a GameObject is touching the Viewcone
@@ -104,6 +111,7 @@ public class ViewconeDetection : MonoBehaviour {
 			VisibleEnemies.Remove(soldier);	//Remove enemy from list of visible enemies if they leave the Viewcone
 			if(AI.currentEnemyTarget == soldier.transform)
 			{
+				//Debug.Log("removed " + soldier.name + " as current enemy target bc left viewcone");
 				AI.currentEnemyTarget = null;
 			}
 		}
@@ -151,5 +159,12 @@ public class ViewconeDetection : MonoBehaviour {
 	public int GetLayerMask()
 	{
 		return layerMask;
+	}
+
+	private void OnDrawGizmos() {
+		 Gizmos.color = Color.green;
+		 Gizmos.DrawWireSphere(AI.transform.position, AI.attackRange);
+		 Gizmos.color = Color.red;
+		 Gizmos.DrawWireSphere(AI.transform.position, AI.attackRange + 2);
 	}
 }

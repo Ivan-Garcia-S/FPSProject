@@ -15,11 +15,15 @@ public class BotManager : MonoBehaviour
     public Transform[] patrolPoints;
     public GameObject navDebugger;
     public GameManager Game;
+    public AudioSource FootAudioSource;
+    public AudioClip WalkSound;
+    public AudioClip SprintSound;
     
     [Header("AI State")]
     public float currentHealth = 100f;
     public float maxHealth = 100f;
     private float currentDistanceFromPoint = -1;
+
     [HideInInspector]
     public float criticalState;
     public float stoppingDistance;
@@ -60,7 +64,6 @@ public class BotManager : MonoBehaviour
     void Start() 
     {
         InvokeRepeating("MoveIfStuck", 5.0f, 3f);
-
     }
     // Update is called once per frame
     void Update()
@@ -78,16 +81,44 @@ public class BotManager : MonoBehaviour
                 currentHealth = Mathf.Min(100, currentHealth + Time.deltaTime * healthRegenPerSecond);
             }
         }
+
+        //Play walk and sprint audio
+        if(animator.GetBool("run")){
+            if(FootAudioSource.isPlaying && FootAudioSource.clip != SprintSound){
+                FootAudioSource.Stop();
+                FootAudioSource.clip = SprintSound;
+                FootAudioSource.Play();
+            }
+            else if(FootAudioSource.clip != SprintSound){
+                FootAudioSource.clip = SprintSound;
+                FootAudioSource.Play();
+            }
+        }
+        else if(!animator.GetBool("idle")){
+            if(FootAudioSource.isPlaying && FootAudioSource.clip != WalkSound){
+                FootAudioSource.Stop();
+                FootAudioSource.clip = WalkSound;
+                FootAudioSource.Play();
+            }
+            else if(FootAudioSource.clip != WalkSound){
+                FootAudioSource.clip = WalkSound;
+                FootAudioSource.Play();
+            }
+        }
     }
-    public void TakeDamage(float damage){
+    //Returns if bot was killed with this bullet
+    public bool TakeDamage(float damage, PlayerState state= null){
         //Take damage
         currentHealth -= damage;
 
         //Update score if bot killed
         if(currentHealth <=0 && !dead){
-            //navDebugger.SetActive(false);
             dead = true;
+            //navDebugger.SetActive(false);
+            Debug.Log("Bot has no health"); 
+            if(state) state.AddKill();
             Game.HandleAIDeath(bot);
+            return true;
         }
 
         //Reset health regen growth
@@ -95,6 +126,7 @@ public class BotManager : MonoBehaviour
 
         //Reset timer for health regen
         durationTimer = 0;
+        return false;
     }
     //Correctly set state for animator to transition to
     public void SetAnimatorState(string stateToSet, bool changeProne=false, bool changeCrouch=false, bool changeSprint=false)

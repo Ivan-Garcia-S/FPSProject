@@ -19,6 +19,8 @@ public class PlayerState : MonoBehaviour
     private float baseHealthRegenPerSecond = 5f;
     private float healthRegenPerSecond;
     private float healthRegenAcceleration = 15f;
+    public int kills;
+    public int deaths;
 
     [Header("Blood UI")]
     public Image overlay;
@@ -41,6 +43,7 @@ public class PlayerState : MonoBehaviour
         gameObject.tag = myTag;
         GameObject damOverlay = GameObject.Find("DamageOverlay");
         overlaySprite = damOverlay.GetComponent<Sprite>();
+        kills = deaths = 0;
     }
 
     void Update()
@@ -52,6 +55,7 @@ public class PlayerState : MonoBehaviour
             InputManager.DisableInputActions();
             MainCam.GetComponent<PlayerCamera>().PlayerActive = false;
             WeaponMgr.CancelInvoke("ReloadFinished");
+            deaths += 1;
             //Destroy(gameObject);
             Game.HandlePlayerDeath(gameObject);
             //currentHealth = maxHealth;
@@ -78,12 +82,16 @@ public class PlayerState : MonoBehaviour
         
     }
 
+    public void AddKill()
+    {
+        kills += 1;
+    }
+
     public void TakeDamage(float damage)
     {
         //Take damage
         currentHealth -= damage;
-
-        //Reset health regen growth
+        //Debug.Log("Damage taken: " + damage + ", health now: " + currentHealth);        //Reset health regen growth
         healthRegenPerSecond = baseHealthRegenPerSecond;
 
         //Handling UI for damage taken
@@ -99,8 +107,12 @@ public class PlayerState : MonoBehaviour
         }
     }
 
-    public void SetDefaultState()
+    public void SetDefaultState(bool resetKillDeath=false)
     {
+        if(resetKillDeath){
+             kills = 0;
+            deaths = 0;
+        }
         currentHealth = maxHealth;
         healthRegenPerSecond = baseHealthRegenPerSecond;
         gameObject.GetComponent<PlayerMotor>().StopMovementExceptFor("idle");

@@ -21,11 +21,11 @@ public class AICheckPlayerInSight : Node
         {
             oldTarget = AI.currentEnemyTarget;
             RaycastHit newHit;
-            //Debug.DrawRay(gun.shootPoint.transform.position, 
-            //enemySoldier.transform.Find("mixamorig:Hips/mixamorig:Spine/mixamorig:Spine1/mixamorig:Spine2").transform.position - gun.shootPoint.transform.position);
+            Debug.DrawRay(AI.aiWM.shootPoint.transform.position, 
+            AI.currentEnemyTarget.Find("mixamorig:Hips/mixamorig:Spine/mixamorig:Spine1/mixamorig:Spine2").transform.position - AI.aiWM.shootPoint.transform.position);
 
             //Find out if there's a clear line of sight from the AI's gun to the enemy soldier
-            if(Physics.Raycast (new Ray(AI.aiWM.shootPoint.transform.position, AI.currentEnemyTarget.Find("mixamorig:Hips/mixamorig:Spine/mixamorig:Spine1/mixamorig:Spine2").transform.position - AI.aiWM.shootPoint.transform.position), out newHit, 200f,AI.detector.GetLayerMask()))
+            if(Physics.Raycast (new Ray(AI.aiWM.shootPoint.transform.position, AI.currentEnemyTarget.Find("mixamorig:Hips/mixamorig:Spine/mixamorig:Spine1/mixamorig:Spine2").transform.position - AI.aiWM.shootPoint.transform.position), out newHit, 200f, AI.detector.GetLayerMask()))
             {
                 if(newHit.collider.CompareTag(AI.enemyTag)) 
                 {
@@ -33,13 +33,22 @@ public class AICheckPlayerInSight : Node
                     return state;
                 }
 
-                else AI.currentEnemyTarget = null;
+                else
+                {
+                    //Debug.Log("AI Has current target but Raycast hit" + newHit.collider.gameObject.name);
+                    AI.currentEnemyTarget = null;
+                }
             }
-            else AI.currentEnemyTarget = null;
+            else{
+                //Debug.Log("Bullet hit nothing at " + Time.time);
+                AI.currentEnemyTarget = null;
+            }
+            
         }
 
         if(AI.currentEnemyTarget == null)
         {
+            //Debug.Log("Checking for new target");
             foreach(GameObject soldier in AI.detector.VisibleEnemies)
             {
                 if(soldier != null && (oldTarget == null || soldier.transform != oldTarget))
@@ -62,6 +71,9 @@ public class AICheckPlayerInSight : Node
         
         //if(AI.currentEnemyTarget != null) state = NodeState.SUCCESS;
         //else state = NodeState.FAILURE;
+       
+        //Debug.Log("CheckPlayerInSight failed at " + Time.time);
+    
         state = NodeState.FAILURE;
         return state;
     }

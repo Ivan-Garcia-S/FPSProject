@@ -123,7 +123,9 @@ public class Viewcone : MonoBehaviour
 		mesh.vertices = cVertices;
 		mesh.triangles = cTriangles;
 
+		//Makes viewcone visable
 		GetComponent<Renderer>().sharedMaterial = material;
+		
 		mesh.RecalculateNormals ();
 		mesh.RecalculateBounds ();
 
@@ -165,11 +167,15 @@ public class Viewcone : MonoBehaviour
 	}
 	private void OnTriggerExit(Collider col) 
 	{	
-		try{
-			GameObject soldier = col.GetComponentInParent<CharacterController>().gameObject;
-			spotter.SoldierLeft(soldier);
-		}
-		catch(NullReferenceException){}
+		//Only notify that soldier has left viewcone if their main collider exits viewcone
+		
+			try{
+				GameObject soldier = col.GetComponentInParent<CharacterController>().gameObject;				
+				if(col.name == "mixamorig:Spine") spotter.SoldierLeft(soldier);
+			}
+			catch(NullReferenceException){}
+		
+		
 		
 
 	}

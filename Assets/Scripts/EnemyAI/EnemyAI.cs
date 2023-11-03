@@ -20,6 +20,7 @@ public class EnemyAI : MonoBehaviour
     //Enemy transforms
     public GameObject[] enemies;
     public Transform currentEnemyTarget;
+    public Transform lastEnemyShotAt;
 
     public LayerMask whatIsGround, whatIsPlayer;
     public Transform walkPointMarker;
@@ -162,5 +163,12 @@ public class EnemyAI : MonoBehaviour
         //Search for enemies again
         state = EnemyAI.PlayerState.PATROLING;
         canInvokeStopHiding = true;
+    }
+
+    public void RemoveFromLastShot(Transform deadSoldier)
+    {
+        if(lastEnemyShotAt != null && lastEnemyShotAt == deadSoldier){
+            lastEnemyShotAt = null;
+        }
     }
 }

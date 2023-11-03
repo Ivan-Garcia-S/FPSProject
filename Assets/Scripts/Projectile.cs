@@ -15,6 +15,10 @@ public class Projectile : MonoBehaviour
     public float lifeSpan = 3f;
     public string enemyTeam;
     
+
+    private void Awake(){
+        playerState = GameObject.Find("Soldier_M_AR").GetComponent<PlayerState>();
+    }
     private void OnEnable() 
     {
         //Debug.Log("Bullet created");
@@ -22,7 +26,6 @@ public class Projectile : MonoBehaviour
         //if(hitmarker == null){
         //    Debug.Log("Hitmark null");
         //}
-        ///playerState = GameObject.Find("Soldier_M_AR").GetComponent<PlayerState>();
         gameObject.transform.parent = null;
         
     }
@@ -45,7 +48,7 @@ public class Projectile : MonoBehaviour
         if(collision.transform.tag == enemyTeam){
             Debug.Log("Enemy soldier hit");
             hitmarker.botHit3();
-            collision.transform.GetComponentInParent<BotManager>().TakeDamage(damage);
+            collision.transform.GetComponentInParent<BotManager>().TakeDamage(damage, playerState); //playerState.AddKill();
         }
         Destroy(gameObject);
     }

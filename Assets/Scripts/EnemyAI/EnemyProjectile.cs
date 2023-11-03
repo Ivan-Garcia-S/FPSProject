@@ -10,6 +10,7 @@ public class EnemyProjectile : MonoBehaviour
     public float lifeSpan = 3f;
     public string enemyTag;
     public string friendlyTag;
+    public string sender;
 
     private void OnEnable() 
     { 
@@ -47,9 +48,10 @@ public class EnemyProjectile : MonoBehaviour
         if(collision.transform.tag != tag && collision.transform.tag != friendlyTag) Destroy(gameObject);  
     }
 
-    public void SetBulletInfo(string myTag)
+    public void SetBulletInfo(string[] senderInfo)
     {
-        friendlyTag = myTag;
-        enemyTag = (myTag == "Team1") ? "Team2" : "Team1";
+        friendlyTag = senderInfo[0];
+        enemyTag = (senderInfo[0] == "Team1") ? "Team2" : "Team1";
+        sender = senderInfo[1];
     }
 }

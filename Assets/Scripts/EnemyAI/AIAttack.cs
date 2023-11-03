@@ -41,13 +41,15 @@ public class AIAttack : Node
             botManager.SetAnimatorState("idle");
         }
         //Set delay for first shot fired or shoot if already shooting
-        if(aiWM.aiNerfOn == true)
+        if(AI.lastEnemyShotAt == null || AI.lastEnemyShotAt != AI.currentEnemyTarget)
+        //if(aiWM.aiNerfOn == true)  CHANGED
         {
             float waitTime = Random.Range(firstBulletDelayMin, firstBulletDelayMax);
             //Debug.Log("Wait time = " + waitTime);
+            
             aiWM.StartCountdown(waitTime);
-        
-            Debug.Log("Cant shoot YET");
+            //aiWM.SetLastTargetToCurrent(waitTime);
+            //Debug.Log("Cant shoot YET");
         } 
         
         else 

@@ -18,8 +18,12 @@ public class AICheckPlayerInAttackRange : Node
     //Check if enemy is within the attack range radius
     public override NodeState Evaluate()
     {
-        
-        Collider[] enemyCollidersInSight = Physics.OverlapSphere(AI.transform.position, AI.attackRange, AI.whatIsPlayer);
+        float range = AI.attackRange;
+        //If already attacking an enemy, make range slightly larger so enemy still visible even if they slightly move away
+        if(AI.state == EnemyAI.PlayerState.ATTACKING){
+            range += 2.3f;
+        }
+        Collider[] enemyCollidersInSight = Physics.OverlapSphere(AI.transform.position, range, AI.whatIsPlayer);
         foreach(Collider c in enemyCollidersInSight)
         {
             try
@@ -27,14 +31,17 @@ public class AICheckPlayerInAttackRange : Node
                 if(c.GetComponentInParent<CharacterController>().transform == AI.currentEnemyTarget)
                 {
                     state = NodeState.SUCCESS;
-                    goto EndCheck;
+                    return state;
                 }
             }
             catch(NullReferenceException){}
             
         }
-        EndCheck:
-            state = state == NodeState.SUCCESS ? state : NodeState.FAILURE;
+            state = NodeState.FAILURE;
+            /*if(state == NodeState.FAILURE){
+                Debug.Log("InAttackRange failed at " + Time.time);
+            }
+            */
             return state;
     }
 }

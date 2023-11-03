@@ -21,9 +21,6 @@ public class PlayerLook : MonoBehaviour
     
     void Awake()
     {
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
-
         //JUST DELETED//
         //skinnedMesh = transform.GetComponentInChildren<SkinnedMeshRenderer>();
         //Transform[] bones = skinnedMesh.bones;

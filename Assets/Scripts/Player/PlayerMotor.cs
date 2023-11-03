@@ -10,7 +10,10 @@ public class PlayerMotor : MonoBehaviour
     private CharacterController Controller;
     private PlayerLook PlayerLook;
     private WeaponManager WeaponManager;
-    //private CharacterController controller;
+    public AudioSource FootAudioSource;
+    public AudioClip WalkSound;
+    public AudioClip SprintSound;
+
     [SerializeField] private Animator Animator;
 
     [Header("Player Info")]
@@ -39,6 +42,34 @@ public class PlayerMotor : MonoBehaviour
         //Constantly update if character is grounded
         isGrounded = Controller.isGrounded;
         if(isGrounded && Animator.GetCurrentAnimatorStateInfo(2).IsName("Jump")) Animator.SetTrigger("stopJump");
+        
+        //Play footstep noise if walking
+        if(Animator.GetBool("idle") || !isGrounded || isProne)
+        {
+            FootAudioSource.Stop();
+        }
+        else if(!Animator.GetBool("idle") && !isSprinting){
+            if(FootAudioSource.isPlaying && FootAudioSource.clip != WalkSound){
+                FootAudioSource.Stop();
+                FootAudioSource.clip = WalkSound;
+                FootAudioSource.Play();
+            }
+            else if(!FootAudioSource.isPlaying){
+                FootAudioSource.clip = WalkSound;
+                FootAudioSource.Play();
+            }
+        }
+        else if(isSprinting){
+             if(FootAudioSource.isPlaying && FootAudioSource.clip != SprintSound){
+                FootAudioSource.Stop();
+                FootAudioSource.clip = SprintSound;
+                FootAudioSource.Play();
+            }
+            else if(!FootAudioSource.isPlaying){
+                FootAudioSource.clip = SprintSound;
+                FootAudioSource.Play();
+            }
+        }
     }
     //Recieve input for InputManager.cs and apply them to character controller
     public void ProcessMove(Vector2 input)

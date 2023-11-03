@@ -9,32 +9,37 @@ public class WeaponManager: MonoBehaviour
 {
     [Header("References")]
     //References
-    public Hitmarker hitmark;
-    public PlayerMotor motor;
-    public GameObject crosshair;
-    public Projectile projectile;
-    public Animator animator;
-    public GameObject sphere;
-    public GameObject bullet;
-    public GameObject gun;
-    public Camera fpsCam;
-    public Transform attackPoint;
-    public Transform camGunPoint;
+    public Hitmarker Hitmark;
+    public PlayerMotor Motor;
+    public GameObject Crosshair;
+    public Projectile Projectile;
+    public Animator Animator;
+    public GameObject Sphere;
+    public GameObject Bullet;
+    public GameObject Gun;
+    public Camera FpsCam;
+    public Transform AttackPoint;
+    public Transform CamGunPoint;
     //Graphics
-    public GameObject muzzleFlash;
-    public TextMeshProUGUI ammoDisplay;
+    public GameObject MuzzleFlash;
+    public TextMeshProUGUI AmmoDisplay;
+    public AudioClip ReloadSound;
+    public AudioClip BulletSound;
+    public AudioSource GunAudioSource;
 
     [Header("Gun Stats")]
     public float shootForce, upwardForce;
     public float timeBetweenShots, spread, reloadTime, fireRate;
-    public int magazineSize, bulletsPerTap;
+    public int magazineSize, bulletsPerTap, reserveAmmo, maxReserveAmmo;
     public float maxRange = 100f;
     public bool isAutomatic;
+
 
     public int bulletsLeft, bulletsShot;
 
     public bool shooting, readyToShoot, reloading;
     public bool allowInvoke = true;
+    private float timeOfFirstShot = -1;
 
 
     private Vector3 shootPointOffset = new Vector3(0.0022f,0.0237f,0.1061f);
@@ -68,19 +73,22 @@ public class WeaponManager: MonoBehaviour
         //bullet = GetComponent<Projectile2>().bullet;
         
         //Set mag to full
-        hitmark = GameObject.Find("Hitmarker").GetComponent<Hitmarker>();
+        Hitmark = GameObject.Find("Hitmarker").GetComponent<Hitmarker>();
         bulletsLeft = magazineSize;
-        crosshair = GameObject.FindWithTag("Crosshair");
+        Crosshair = GameObject.FindWithTag("Crosshair");
         readyToShoot = true;
         isAutomatic = true;
         isAimingIn = false;
-        motor = GetComponentInParent<PlayerMotor>();
-        animator = GetComponentInParent<Animator>();
-        sphere = GameObject.Find("Sphere");
+        Motor = GetComponentInParent<PlayerMotor>();
+        Animator = GetComponentInParent<Animator>();
+        Sphere = GameObject.Find("Sphere");
         ads = GameObject.Find("RightHandIK_AR").GetComponent<TwoBoneIKConstraint>();
         leftHand = GameObject.Find("LeftHandIK").GetComponent<TwoBoneIKConstraint>();
         leftHandTarget = transform.Find("LeftHandIKTarget");
         leftHandTargetProne = transform.Find("LeftHandIKTargetProne");
+        GunAudioSource = GetComponent<AudioSource>();
+        maxReserveAmmo = 250;
+        reserveAmmo = maxReserveAmmo;
         //originalGunSpot = transform.localPosition;
     }
 
@@ -88,7 +96,7 @@ public class WeaponManager: MonoBehaviour
     void Update()
     {
 
-        shooting = animator.GetBool("tryToShoot");
+        shooting = Animator.GetBool("tryToShoot");
         ///shooting = animator.GetBool("isShooting");
 
         //Auto reload when trying to shoot with no ammo
@@ -119,27 +127,49 @@ public class WeaponManager: MonoBehaviour
         */
 
         //Remove crosshair if aiming down sights
-        if(animator.GetBool("aimingDown")) crosshair.SetActive(false);
-        else crosshair.SetActive(true);
+        if(Animator.GetBool("aimingDown")) Crosshair.SetActive(false);
+        else Crosshair.SetActive(true);
         
         //AimDownSights();
 
         //Set ammo display
-        if(ammoDisplay != null) ammoDisplay.SetText(bulletsLeft / bulletsPerTap + " / " + magazineSize / bulletsPerTap);
+        if(AmmoDisplay != null) AmmoDisplay.SetText(bulletsLeft / bulletsPerTap + " / " + reserveAmmo);
     }
 
     
     public void StartShoot()
     {
         //animator.SetBool("isShooting", true);
-        animator.SetBool("tryToShoot", true);
+        Animator.SetBool("tryToShoot", true);
+        timeOfFirstShot = Time.time;
     }
    
     public void EndShoot()
     {
         //animator.SetBool("isShooting", false);
         //animator.SetBool("isShooting", false);
-        animator.SetBool("tryToShoot", false);
+
+        //Set animator and sfx correctly
+        Animator.SetBool("tryToShoot", false);
+        if(GunAudioSource.isPlaying && GunAudioSource.clip == BulletSound) 
+        {
+            float diffIntime = Time.time - timeOfFirstShot;
+            if(diffIntime >= .128f){
+                        GunAudioSource.Stop();
+            }
+            else{
+                Invoke("StopGunShotSound", .128f - diffIntime);
+            }
+        }
+    
+        
+    }
+    //Manually stop sound so at least one bullet is fired in sound player
+    private void StopGunShotSound()
+    {
+        if(GunAudioSource.clip == BulletSound){
+            GunAudioSource.Stop();
+        }
     }
 
     private void Shoot()
@@ -147,14 +177,14 @@ public class WeaponManager: MonoBehaviour
 
         //TAKE OUT ///////
         //animator.SetBool("shoot", true);
-        motor.StopSprint();
+        Motor.StopSprint();
         //Debug.Log("shooting: " + animator.GetBool("shooting"));
 
         //Allow shot per frame
         readyToShoot = false;
 
         //Use Raycast to find bullet hit point
-        Ray ray = fpsCam.ViewportPointToRay(new Vector3(0.5f,0.5f, 0));
+        Ray ray = FpsCam.ViewportPointToRay(new Vector3(0.5f,0.5f, 0));
         RaycastHit hit;
 
         Vector3 targetPoint;
@@ -172,24 +202,30 @@ public class WeaponManager: MonoBehaviour
         Vector3 directionWithSpread = directionNoSpread + new Vector3(spreadX,spreadY,0); 
 
         //Instantiate bullet
-        GameObject currentBullet = Instantiate(bullet, attackPoint.transform.position, attackPoint.transform.rotation);
-        currentBullet.GetComponent<Projectile>().SetBulletInfo(enemyTag, hitmark);
-        //Debug.Log("New bullet shot");
-
-        //GameObject currentBullet = Instantiate(bullet, attackPoint.transform, false);
-
+        GameObject currentBullet = Instantiate(Bullet, AttackPoint.transform.position, AttackPoint.transform.rotation);
+        currentBullet.GetComponent<Projectile>().SetBulletInfo(enemyTag, Hitmark);
         
         //Rotate bullet to shoot direction
         currentBullet.transform.forward = directionWithSpread.normalized;
+        currentBullet.transform.Rotate(90,0,0);
+
+        //Change sound to shoot sound
+        if(GunAudioSource.clip != BulletSound){
+            GunAudioSource.Stop();
+            GunAudioSource.clip = BulletSound;
+        }
+        if(!GunAudioSource.isPlaying){
+            GunAudioSource.Play();
+        }
 
         //Add force to fire bullet
         currentBullet.GetComponent<Rigidbody>().AddForce(directionWithSpread.normalized * shootForce, ForceMode.Impulse);
         //Upward force for grenades that bounce
-        currentBullet.GetComponent<Rigidbody>().AddForce(fpsCam.transform.up * upwardForce, ForceMode.Impulse);
+        currentBullet.GetComponent<Rigidbody>().AddForce(FpsCam.transform.up * upwardForce, ForceMode.Impulse);
 
         
         //Instantiate muzzle flash
-        if(muzzleFlash != null) Instantiate(muzzleFlash, attackPoint.position, Quaternion.identity);
+        if(MuzzleFlash != null) Instantiate(MuzzleFlash, AttackPoint.position, Quaternion.identity);
         
         //Adjust bullet count
         bulletsLeft--;
@@ -206,7 +242,6 @@ public class WeaponManager: MonoBehaviour
         if(bulletsShot < bulletsPerTap && bulletsLeft > 0){
             Invoke("Shoot", timeBetweenShots);
         }
-        
     }
 
     private void ResetShot()
@@ -214,19 +249,18 @@ public class WeaponManager: MonoBehaviour
         //Allow shooting and Invoking again
         readyToShoot = true;
         allowInvoke = true;
-        
-        //TAKE OUT// 8/28/23
-        //animator.SetBool("shoot", false);
-
     }
 
     public void Reload()
     {
         //Only reload if magazine not full
-        if(bulletsLeft < magazineSize)
+        if(bulletsLeft < magazineSize && !Motor.IsSprinting() && !reloading)
         {
-            animator.SetBool("reload",true);
+            Animator.SetBool("reload",true);
             reloading = true;
+            GunAudioSource.Stop();
+            GunAudioSource.clip = ReloadSound;
+            GunAudioSource.Play();
             StartCoroutine(ReleaseLeftHand());
             Invoke("ReloadFinished", reloadTime);
         }
@@ -235,7 +269,9 @@ public class WeaponManager: MonoBehaviour
 
     private void ReloadFinished()
     {
-        animator.SetBool("reload",false);
+        GunAudioSource.Stop();
+        Animator.SetBool("reload",false);
+        reserveAmmo -= (magazineSize - bulletsLeft);
         bulletsLeft = magazineSize;
         StartCoroutine(PlaceBackLeftHand());
         reloading = false;
@@ -244,7 +280,8 @@ public class WeaponManager: MonoBehaviour
     public void CancelReload()
     {
         CancelInvoke("ReloadFinished");
-        animator.SetBool("reload", false);
+        GunAudioSource.Stop();
+        Animator.SetBool("reload", false);
         StartCoroutine(PlaceBackLeftHand());
         reloading = false;
     }
@@ -283,12 +320,13 @@ public class WeaponManager: MonoBehaviour
         if(!reloading)
         {
             isAimingIn = true;
-            if(stopADS != null) StopCoroutine(stopADS);
-            animator.SetBool("aimingDown",true);
             
-            motor.StopSprint();
+            if(stopADS != null) StopCoroutine(stopADS);
+            Animator.SetBool("aimingDown",true);
+            
+            Motor.StopSprint();
             startADS = StartCoroutine(ADS());
-            motor.ADSActive(true);
+            Motor.ADSActive(true);
         }
     }
 
@@ -306,17 +344,15 @@ public class WeaponManager: MonoBehaviour
 
     public void AimingInReleased()
     {
-        //Debug.Log("In ADS released");
         isAimingIn = false;
-        
         if(startADS != null) StopCoroutine(startADS);
         
-        animator.SetBool("aimingDown",false);
-        stopADS = StartCoroutine(exitADS());
-        motor.ADSActive(false);
+        Animator.SetBool("aimingDown",false);
+        stopADS = StartCoroutine(ExitADS());
+        Motor.ADSActive(false);
     }
 
-    IEnumerator exitADS()
+    IEnumerator ExitADS()
     {
         timeElapsed = 0;
         while (timeElapsed < aimInTime)
@@ -334,18 +370,19 @@ public class WeaponManager: MonoBehaviour
         Vector3 targetPosition = transform.position;
         
         if(isAimingIn){
-            //Debug.Log("CALCUlATE NEW AIM IN");
-            targetPosition = fpsCam.transform.position;
+            targetPosition = FpsCam.transform.position;
         }
         weaponSwayPosition = weaponSwayObj.transform.position;
         weaponSwayPosition = Vector3.SmoothDamp(weaponSwayPosition,targetPosition, ref weaponSwayPositionVelocity, aimInTime);
         weaponSwayObj.transform.position = weaponSwayPosition;
 
     }
+    //Reset player attributes to their default state
     public void SetDefaultState()
     {
         bulletsLeft = magazineSize;
-        animator.SetBool("aimingDown",false);
+        reserveAmmo = maxReserveAmmo;
+        Animator.SetBool("aimingDown",false);
         ads.weight = 0;
         isAimingIn = false;
         readyToShoot = true;
@@ -355,18 +392,16 @@ public class WeaponManager: MonoBehaviour
     }
     public void SetProneSettings(bool isProne)
     {
-        //leftHand.data.target = isProne ? leftHandTargetProne : leftHandTarget;
-        //leftHandTarget.position = new Vector3(-0.92f,-0.95f,-2.97f);
         if(isProne)
         {
             leftHandTarget.localPosition = new Vector3(-0.92f,-0.95f,-2.97f);
             leftHandTarget.localEulerAngles = new Vector3(358.42f,272.68f,293.74f);
-        } //leftHandTarget.SetPositionAndRotation(new Vector3(-0.92f,-0.95f,-2.97f), Quaternion.Euler(new Vector3(358.42f,272.68f,293.74f)));  
+        }
         else 
         {
             leftHandTarget.localPosition = new Vector3(-0.13f,-0.027f,-0.57f);
             leftHandTarget.localEulerAngles = new Vector3(342.30f,86.89f,92.97f);
-        }//leftHandTarget.SetPositionAndRotation(new Vector3(-0.13f,-0.027f,-0.57f), Quaternion.Euler(new Vector3(342.30f,86.89f,92.97f)));
+        }
     }
 
 }

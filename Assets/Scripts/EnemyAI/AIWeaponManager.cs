@@ -33,6 +33,12 @@ public class AIWeaponManager : MonoBehaviour
     private bool nerfRoutineRunning;
     public bool adsAnimComplete;
 
+    [Header("Audio")]
+    
+    public AudioClip bulletSound;
+    public AudioClip reloadSound;
+    public AudioSource audioSource;
+
     
     // Start is called before the first frame update
     void Start()
@@ -47,6 +53,7 @@ public class AIWeaponManager : MonoBehaviour
        firstBulletRoutineRunning = false;
        nerfRoutineRunning = false;
         adsAnimComplete = false;
+        audioSource = GetComponent<AudioSource>();
     }
 
     // Update is called once per frame
@@ -58,7 +65,7 @@ public class AIWeaponManager : MonoBehaviour
     public void Shoot(Transform target)
     {
 
-        if (readyToShoot && !reloading && bulletsInMag > 0 && processedLastShootCall)
+        if (readyToShoot && !reloading && bulletsInMag > 0 && processedLastShootCall && target != null)
         {
             //Wait until bot ads animation complete before firing 
             if(!animator.GetBool("shoot") || !adsAnimComplete){
@@ -80,23 +87,45 @@ public class AIWeaponManager : MonoBehaviour
                 //Calculate direction from attackPoint to the targetPoint
                 Vector3 directionNoSpread = enemySpine.position - shootPoint;
 
+                float distanceToEnemy = Vector3.Distance(enemySpine.position, shootPoint);
+
+                float currentSpread = spread;
+                //Make spread smaller if enemy is far
+                if(distanceToEnemy > 7.5f){
+                    currentSpread = 0.7f;
+                }
+
                 //Calculate spread
-                float spreadX = Random.Range(-spread, spread);
-                float spreadY = Random.Range(-spread, spread);
+                float spreadX = Random.Range(-currentSpread, currentSpread);
+                float spreadY = Random.Range(-currentSpread, currentSpread);
 
                 //Direction with spread
                 Vector3 directionWithSpread = directionNoSpread + new Vector3(spreadX,spreadY,0); 
                 
+                string[] infoArray = new string[2];
+                infoArray[0] = AI.tag;
+                infoArray[1] = AI.name;
+
                 ///Create bullet and add force to make it shoot forward
                 GameObject bullet = GameObject.Instantiate(projectile, shootPoint, Quaternion.identity);
-                bullet.GetComponent<EnemyProjectile>().SendMessage("SetBulletInfo", AI.tag);
+                bullet.GetComponent<EnemyProjectile>().SendMessage("SetBulletInfo", infoArray);
                 Rigidbody rb = bullet.GetComponent<Rigidbody>();
+
+                //Change sound to shoot sound
+                if(audioSource.clip != bulletSound){
+                    audioSource.Stop();
+                    audioSource.clip = bulletSound;
+                }
+                if(!audioSource.isPlaying){
+                    audioSource.Play();
+                }
 
                 rb.AddForce(directionWithSpread.normalized * 100f, ForceMode.Impulse);
                 rb.AddForce(transform.up * upwardForce, ForceMode.Impulse);
                 bulletsInMag--;
                 bulletsShot++;
-                
+                Debug.Log("AI Bullet shot");
+
                 //If more than one bullet per tap call Shoot() again
                 if(bulletsShot < bulletsPerTap && bulletsInMag > 0){
                     Invoke("Shoot", timeBetweenShots);
@@ -107,18 +136,20 @@ public class AIWeaponManager : MonoBehaviour
                     readyToShoot = false;
                     if(allowInvoke)
                     {
-                        Debug.Log("Fire rate = " + fireRate);
+                        //Debug.Log("Fire rate = " + fireRate);
                         Invoke("ResetShot", fireRate);
                         allowInvoke = false;
                     }
                 }
                 processedLastShootCall = true;
                 
-                if(nerfRoutineRunning){
+                /*if(nerfRoutineRunning){
                     StopCoroutine(TurnOnAINerf());
                 }
                 callAINerf = StartCoroutine(TurnOnAINerf());
+                */
             }
+            AI.lastEnemyShotAt = target;
             
         }
         else if(processedLastShootCall){
@@ -152,6 +183,8 @@ public class AIWeaponManager : MonoBehaviour
         animator.SetBool("reload",true);
         reloading = true;
         readyToShoot = false;
+        audioSource.clip = reloadSound;
+        audioSource.Play();
         Invoke("StopReloadAnimation", reloadTime - 0.5f);
         Invoke("ReloadFinished", reloadTime);
         
@@ -173,9 +206,11 @@ public class AIWeaponManager : MonoBehaviour
 
     public void StartCountdown(float waitTime)
     {
-        if(firstBullet == null || !firstBulletRoutineRunning){
+        /*if(firstBullet == null || !firstBulletRoutineRunning){
             firstBullet = StartCoroutine(FirstBulletCountdown(waitTime));
         }
+        */
+        StartCoroutine(SetLastTargetToCurrent(waitTime));
     }
 
     
@@ -185,6 +220,13 @@ public class AIWeaponManager : MonoBehaviour
         yield return new WaitForSeconds(seconds);
         aiNerfOn = false;
         firstBulletRoutineRunning = false;
+    }
+
+    public IEnumerator SetLastTargetToCurrent(float seconds)
+    {
+        yield return new WaitForSeconds(seconds);
+        //Debug.Log("calling shoot");
+        Shoot(AI.currentEnemyTarget);
     }
 
     IEnumerator TurnOnAINerf()
