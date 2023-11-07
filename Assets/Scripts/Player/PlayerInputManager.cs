@@ -47,7 +47,7 @@ public class PlayerInputManager : MonoBehaviour
     void FixedUpdate()
     {
         motor.ProcessMove(PlayerActions.Movement.ReadValue<Vector2>());
-        PlayerLook.ProcessLook(PlayerActions.Look.ReadValue<Vector2>());
+        PlayerLook.ProcessLook(PlayerActions.Look.ReadValue<Vector2>(), PlayerActions.Look.activeControl,PlayerActions.ADSPress.phase);
     }
 
     void LateUpdate() {

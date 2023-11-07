@@ -19,9 +19,14 @@ public class EnemyProjectile : MonoBehaviour
     }
 
     private void Update() 
-    {
-        lifeSpan -= Time.deltaTime;
-        if(lifeSpan <= 0) Destroy(gameObject);
+    { 
+        //Only decrease lifespan if bullet active
+        if(gameObject.activeInHierarchy) lifeSpan -= Time.deltaTime;
+        
+        if(lifeSpan <= 0){
+            Debug.Log("Setting inactive bc of time");
+            gameObject.SetActive(false);//Destroy(gameObject);
+        } 
     }
 
     void OnCollisionEnter(Collision collision) {
@@ -29,14 +34,20 @@ public class EnemyProjectile : MonoBehaviour
         try
         {
             Transform enemyHit = collision.transform.GetComponentInParent<CharacterController>().transform;
-            
             if(enemyHit.tag == enemyTag)   
             {
                 if(enemyHit.GetComponent<BotManager>() != null)
+                {
                     enemyHit.GetComponent<BotManager>().TakeDamage(damage);  //If bullet hits enemy bot do damage
+                    Debug.Log("Enemy hit with enemy proj");
+                }
+                    
                 else if(enemyHit.GetComponent<PlayerState>() != null)
                     enemyHit.GetComponent<PlayerState>().TakeDamage(damage); // If bullet hits enemy player do damage
                 else  Debug.LogWarning("Enemy object is unidentifiable");
+            }
+            else if(enemyHit.tag == tag){
+                Debug.Log("HAS SAME TAG TF");
             }
         
         }
@@ -45,7 +56,7 @@ public class EnemyProjectile : MonoBehaviour
         }
         //Destroy bullet unless it goes through a teammate with the same team tag
         
-        if(collision.transform.tag != tag && collision.transform.tag != friendlyTag) Destroy(gameObject);  
+        if(collision.transform.tag != tag && collision.transform.tag != friendlyTag) Destroy(gameObject);//gameObject.SetActive(false); 
     }
 
     public void SetBulletInfo(string[] senderInfo)
@@ -53,5 +64,6 @@ public class EnemyProjectile : MonoBehaviour
         friendlyTag = senderInfo[0];
         enemyTag = (senderInfo[0] == "Team1") ? "Team2" : "Team1";
         sender = senderInfo[1];
+        //lifeSpan = 3f;
     }
 }

@@ -50,8 +50,6 @@ public class PlayerState : MonoBehaviour
     {
         //If character has no health remaining
         if(currentHealth < 0){
-            Debug.Log("You died");
-
             InputManager.DisableInputActions();
             MainCam.GetComponent<PlayerCamera>().PlayerActive = false;
             WeaponMgr.CancelInvoke("ReloadFinished");

@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class PlayerLook : MonoBehaviour
 {
@@ -15,8 +16,15 @@ public class PlayerLook : MonoBehaviour
     private float minClamp = -80f;
     [SerializeField]
     private float maxClamp = 80f;
-    public float xSensitivity = 90f;
-    public float ySensitivity = 90f;
+    public float xSensitivity = 15f;
+    public float ySensitivity = 15f;
+    private float controllerSenseX = 500f;
+    private float controllerSenseY = 250f;
+    private float controllerSenseXADS = 80f;
+    private float controllerSenseYADS = 80f;
+
+    [Header("Input")]
+    private bool controllerUsed;
     
     
     void Awake()
@@ -42,22 +50,47 @@ public class PlayerLook : MonoBehaviour
     {
         cam = GetComponent<PlayerState>().MainCam;
     }
-    public void ProcessLook(Vector2 inputVector)
+    public void ProcessLook(Vector2 inputVector, InputControl typeInput, InputActionPhase ads)
     {
+        controllerUsed = typeInput != null && !typeInput.device.description.deviceClass.Equals("Mouse");
+        
+
         float mouseX = inputVector.x;
         float mouseY = inputVector.y;
 
+        float extraXMult = 1;
+        if(Mathf.Abs(mouseX) < 0.12){
+            mouseX = 0;
+        }
+        else if(mouseX < 0.27f){
+            extraXMult = 0.2f;
+        }
         //Calculate camera rotation for looking up and down
-        xRotation -= (mouseY * Time.deltaTime) * ySensitivity;
-        xRotation = Mathf.Clamp(xRotation, minClamp, maxClamp);
+        if(controllerUsed){  //For controller
+            Debug.Log("Controller input = " + inputVector);
+            if(ads.Equals(InputActionPhase.Performed))
+            {
+                xRotation -= (mouseY * Time.deltaTime) * controllerSenseYADS;
+                yRotation += (mouseX * Time.deltaTime) * controllerSenseXADS * extraXMult;
+            }
+            else{
+                xRotation -= (mouseY * Time.deltaTime) * controllerSenseY;
+                yRotation += (mouseX * Time.deltaTime) * controllerSenseX * extraXMult;
+            }
+        }
+        else{  //For all else
+            xRotation -= (mouseY * Time.deltaTime) * ySensitivity;
+            yRotation += (mouseX * Time.deltaTime) * xSensitivity;
+        }
 
-        yRotation += (mouseX * Time.deltaTime) * xSensitivity;
+        xRotation = Mathf.Clamp(xRotation, minClamp, maxClamp);
 
         //Apply to camera transform
         cam.transform.localRotation = Quaternion.Euler(xRotation, cam.transform.eulerAngles.y, cam.transform.eulerAngles.z);
 
         //Rotate player left and right
-        transform.Rotate(Vector3.up * mouseX * Time.deltaTime * xSensitivity);
+        if(controllerUsed)  transform.Rotate(Vector3.up * mouseX * Time.deltaTime * controllerSenseX);
+        else transform.Rotate(Vector3.up * mouseX * Time.deltaTime * xSensitivity);
     }
 
     public void SetProneSettings(bool isProne)

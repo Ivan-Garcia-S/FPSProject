@@ -49,7 +49,6 @@ public class GameManager : MonoBehaviour
     public List<Transform> respawnPoints = new List<Transform>();
     private GameObject playerObject;
     
-
     
     // Start is called before the first frame update
     void Awake()

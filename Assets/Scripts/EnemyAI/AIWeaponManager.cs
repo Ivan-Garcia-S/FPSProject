@@ -108,6 +108,21 @@ public class AIWeaponManager : MonoBehaviour
 
                 ///Create bullet and add force to make it shoot forward
                 GameObject bullet = GameObject.Instantiate(projectile, shootPoint, Quaternion.identity);
+                
+                //New Create bullet /////////NOT USING
+                
+                /*GameObject bullet = BulletPool.Pool.GetPooledBullet();
+                if(bullet != null)
+                {
+                    bullet.transform.position = shootPoint;
+                    bullet.transform.rotation = Quaternion.identity;
+                    bullet.SetActive(true);
+                }
+                else{
+                    bullet = BulletPool.Pool.AddToPool(projectile);
+                }
+                */
+
                 bullet.GetComponent<EnemyProjectile>().SendMessage("SetBulletInfo", infoArray);
                 Rigidbody rb = bullet.GetComponent<Rigidbody>();
 
